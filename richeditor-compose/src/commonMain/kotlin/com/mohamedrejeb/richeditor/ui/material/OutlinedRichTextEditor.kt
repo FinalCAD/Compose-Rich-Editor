@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.ui.BasicRichTextEditor
+import com.mohamedrejeb.richeditor.ui.RichTextChangedListener
 
 /**
  * Material Design outlined rich text field
@@ -65,6 +66,7 @@ import com.mohamedrejeb.richeditor.ui.BasicRichTextEditor
  * that 1 <= [minLines] <= [maxLines]. This parameter is ignored when [singleLine] is true.
  * @param minLines the minimum height in terms of minimum number of visible lines. It is required
  * that 1 <= [minLines] <= [maxLines]. This parameter is ignored when [singleLine] is true.
+
  * @param interactionSource the [MutableInteractionSource] representing the stream of
  * [Interaction]s for this OutlinedTextField. You can create and pass in your own remembered
  * [MutableInteractionSource] if you want to observe [Interaction]s and customize the
@@ -75,7 +77,7 @@ import com.mohamedrejeb.richeditor.ui.BasicRichTextEditor
  * different states. See [TextFieldDefaults.outlinedTextFieldColors]
  */
 @Composable
-fun OutlinedRichTextEditor(
+public fun OutlinedRichTextEditor(
     state: RichTextState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

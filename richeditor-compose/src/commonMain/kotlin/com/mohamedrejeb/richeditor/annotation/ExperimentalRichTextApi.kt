@@ -5,4 +5,10 @@ package com.mohamedrejeb.richeditor.annotation
             " the future.",
     level = RequiresOptIn.Level.WARNING
 )
-annotation class ExperimentalRichTextApi()
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY
+)
+@Retention(AnnotationRetention.BINARY)
+public annotation class ExperimentalRichTextApi

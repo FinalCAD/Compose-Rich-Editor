@@ -13,39 +13,27 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    uses: ./.github/workflows/gradle.yml
+#  build:
+#    uses: ./.github/workflows/gradle.yml
   deploy:
-    needs: build
+#    needs: build
     strategy:
       matrix:
         include:
-          - target: publishIosArm64PublicationToSonatypeRepository
-            os: macos-latest
-          - target: publishIosSimulatorArm64PublicationToSonatypeRepository
-            os: macos-latest
-          - target: publishIosX64PublicationToSonatypeRepository
-            os: macos-latest
-          - target: publishAndroidReleasePublicationToSonatypeRepository
-            os: macos-latest
-          - target: publishDesktopPublicationToSonatypeRepository
-            os: macos-latest
-          - target: publishJsPublicationToSonatypeRepository
-            os: macos-latest
-          - target: publishKotlinMultiplatformPublicationToSonatypeRepository
-            os: macos-latest
+          - target: publish
+            os: macos-14
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-      - uses: actions/cache@v3
+        uses: gradle/wrapper-validation-action@v3
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.konan
           key: ${{ runner.os }}-${{ hashFiles('**/.lock') }}
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'

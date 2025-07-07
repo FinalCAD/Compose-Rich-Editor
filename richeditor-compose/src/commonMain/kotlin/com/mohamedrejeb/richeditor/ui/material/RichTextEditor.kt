@@ -15,11 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.ui.BasicRichTextEditor
+import com.mohamedrejeb.richeditor.ui.RichTextChangedListener
 import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
 
 /**
@@ -81,7 +83,7 @@ import com.mohamedrejeb.richeditor.ui.material3.RichTextEditor
     ),
     level = DeprecationLevel.ERROR
 )
-fun RichTextEditor(
+public fun RichTextEditor(
     state: RichTextState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -98,6 +100,7 @@ fun RichTextEditor(
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     minLines: Int = 1,
     maxLength: Int = Int.MAX_VALUE,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape =
         MaterialTheme.shapes.small.copy(bottomEnd = ZeroCornerSize, bottomStart = ZeroCornerSize),
@@ -125,6 +128,7 @@ fun RichTextEditor(
         cursorBrush = SolidColor(colors.cursorColor(isError).value),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
+        onTextLayout = onTextLayout,
         interactionSource = interactionSource,
         singleLine = singleLine,
         maxLines = maxLines,

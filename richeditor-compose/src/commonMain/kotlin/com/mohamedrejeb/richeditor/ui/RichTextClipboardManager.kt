@@ -4,11 +4,12 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.RichSpanStyle
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.paragraph.type.ParagraphType.Companion.startText
 import com.mohamedrejeb.richeditor.utils.append
-import com.mohamedrejeb.richeditor.utils.fastForEachIndexed
+import androidx.compose.ui.util.fastForEachIndexed
 import kotlin.math.max
 import kotlin.math.min
 
@@ -27,12 +28,17 @@ internal class RichTextClipboardManager(
         return clipboardManager.getText()
     }
 
+    @OptIn(ExperimentalRichTextApi::class)
     override fun setText(annotatedString: AnnotatedString) {
         val selection = richTextState.selection
         val richTextAnnotatedString = buildAnnotatedString {
             var index = 0
             richTextState.richParagraphList.fastForEachIndexed { i, richParagraphStyle ->
-                withStyle(richParagraphStyle.paragraphStyle.merge(richParagraphStyle.type.style)) {
+                withStyle(
+                    richParagraphStyle.paragraphStyle.merge(
+                        richParagraphStyle.type.getStyle(richTextState.config)
+                    )
+                ) {
                     if (
                         !selection.collapsed &&
                         selection.min < index + richParagraphStyle.type.startText.length &&
@@ -50,7 +56,7 @@ internal class RichTextClipboardManager(
                             richSpanList = richParagraphStyle.children,
                             startIndex = index,
                             selection = selection,
-                            richTextConfig = richTextState.richTextConfig,
+                            richTextConfig = richTextState.config,
                         )
                         if (!richTextState.singleParagraphMode) {
                             if (i != richTextState.richParagraphList.lastIndex) {
@@ -58,7 +64,7 @@ internal class RichTextClipboardManager(
                                     !selection.collapsed &&
                                     selection.min < index + 1 &&
                                     selection.max > index
-                                ) append("\n")
+                                ) appendLine()
                                 index++
                             }
                         }

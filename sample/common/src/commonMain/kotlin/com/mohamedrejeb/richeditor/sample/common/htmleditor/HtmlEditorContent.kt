@@ -2,28 +2,37 @@ package com.mohamedrejeb.richeditor.sample.common.htmleditor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import androidx.compose.ui.text.style.TextDecoration
 import com.mohamedrejeb.richeditor.model.rememberRichTextState
-import com.mohamedrejeb.richeditor.sample.common.ui.theme.ComposeRichEditorTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun HtmlEditorContent() {
-    val navigator = LocalNavigator.current
-
+fun HtmlEditorContent(
+    navigateBack: () -> Unit
+) {
     var isHtmlToRichText by remember { mutableStateOf(false) }
 
     var html by remember {
         mutableStateOf(TextFieldValue(""))
     }
     val richTextState = rememberRichTextState()
+
+    LaunchedEffect(Unit) {
+        richTextState.config.linkColor = Color(0xFF1d9bd1)
+        richTextState.config.linkTextDecoration = TextDecoration.None
+        richTextState.config.codeSpanColor = Color(0xFFd7882d)
+        richTextState.config.codeSpanBackgroundColor = Color.Transparent
+        richTextState.config.codeSpanStrokeColor = Color(0xFF494b4d)
+        richTextState.config.unorderedListIndent = 40
+        richTextState.config.orderedListIndent = 50
+    }
 
     LaunchedEffect(richTextState.annotatedString, isHtmlToRichText) {
         if (!isHtmlToRichText) {
@@ -37,9 +46,9 @@ fun HtmlEditorContent() {
                 title = { Text("Html Editor") },
                 navigationIcon = {
                     IconButton(
-                        onClick = { navigator?.pop() }
+                        onClick = navigateBack
                     ) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {

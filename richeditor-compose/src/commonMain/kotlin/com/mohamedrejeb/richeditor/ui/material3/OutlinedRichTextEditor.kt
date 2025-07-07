@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.*
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.ui.BasicRichTextEditor
+import com.mohamedrejeb.richeditor.ui.RichTextChangedListener
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -87,7 +88,7 @@ import kotlin.math.roundToInt
  */
 @ExperimentalMaterial3Api
 @Composable
-fun OutlinedRichTextEditor(
+public fun OutlinedRichTextEditor(
     state: RichTextState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,

@@ -12,6 +12,8 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextGeometricTransform
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.util.fastForEach
+import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.RichSpan
 import com.mohamedrejeb.richeditor.model.RichSpanStyle
 
@@ -75,14 +77,15 @@ internal fun List<RichSpan>.getCommonStyle(strict: Boolean = false): SpanStyle? 
     )
 }
 
+@OptIn(ExperimentalRichTextApi::class)
 internal fun List<RichSpan>.getCommonRichStyle(): RichSpanStyle? {
     var richSpanStyle: RichSpanStyle? = null
 
     for (index in indices) {
         val item = get(index)
         if (richSpanStyle == null) {
-            richSpanStyle = item.style
-        } else if (richSpanStyle::class != item.style::class) {
+            richSpanStyle = item.fullStyle
+        } else if (richSpanStyle::class != item.fullStyle::class) {
             richSpanStyle = null
             break
         }

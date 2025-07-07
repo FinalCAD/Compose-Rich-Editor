@@ -19,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import com.mohamedrejeb.richeditor.model.ImageLoader
+import com.mohamedrejeb.richeditor.model.LocalImageLoader
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.ui.BasicRichText
 
@@ -61,7 +63,7 @@ import com.mohamedrejeb.richeditor.ui.BasicRichText
  * @param style Style configuration for the text such as color, font, line height etc.
  */
 @Composable
-fun RichText(
+public fun RichText(
     state: RichTextState,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -79,7 +81,8 @@ fun RichText(
     minLines: Int = 1,
     inlineContent: Map<String, InlineTextContent> = mapOf(),
     onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current
+    style: TextStyle = LocalTextStyle.current,
+    imageLoader: ImageLoader = LocalImageLoader.current,
 ) {
     val textColor = color.takeOrElse {
         style.color.takeOrElse {
@@ -110,6 +113,7 @@ fun RichText(
         softWrap = softWrap,
         maxLines = maxLines,
         minLines = minLines,
-        inlineContent = inlineContent
+        inlineContent = inlineContent,
+        imageLoader = imageLoader,
     )
 }
