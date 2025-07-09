@@ -3,7 +3,6 @@ name: Deploy package for Android
 on:
   workflow_dispatch:
 
-# Le bloc 'env' qui fonctionne avec votre configuration Gradle
 env:
   gpr.user: ${{ github.actor }}
   gpr.key: ${{ secrets.GITHUB_TOKEN }}
@@ -15,8 +14,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup environment
-        uses: ./.github/actions/setup-android
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Konan
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.konan
+          key: ${{ runner.os }}-${{ hashFiles('**/.lock') }}
 
       - name: Publish to GitHub Packages
         run: ./gradlew richeditor-compose:publishMavenPublicationToGitHubPackagesRepository -x :richeditor-compose:signAndroidReleasePublication
