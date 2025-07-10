@@ -28,5 +28,4 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/.lock') }}
 
       - name: Publish to GitHub Packages
-        run: ./gradlew richeditor-compose:publishMavenPublicationToGitHubPackagesRepository -x :richeditor-compose:signAndroidReleasePublication
-
+        run: ./gradlew richeditor-compose:publishMavenPublicationToGitHubPackagesRepository
