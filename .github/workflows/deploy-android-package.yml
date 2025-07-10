@@ -4,8 +4,9 @@ on:
   workflow_dispatch:
 
 env:
-  gpr.user: ${{ github.actor }}
-  gpr.key: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_ACTOR: ${{ github.actor }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  VERSION: "1.0.0-rc13-finalcad"
 
 jobs:
   buildAndPush:
@@ -27,5 +28,5 @@ jobs:
             ~/.konan
           key: ${{ runner.os }}-${{ hashFiles('**/.lock') }}
 
-      - name: Publish to GitHub Packages
-        run: ./gradlew richeditor-compose:publishMavenPublicationToGitHubPackagesRepository
+      - name: Publish all packages to GitHub Packages
+        run: ./gradlew publish
