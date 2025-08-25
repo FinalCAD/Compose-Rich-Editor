@@ -75,7 +75,7 @@ internal fun AnnotatedString.Builder.append(
 ): Int {
     var index = startIndex
 
-    withStyle(richSpan.spanStyle.merge(richSpan.style.spanStyle(richTextConfig))) {
+    withStyle(richSpan.spanStyle.merge(richSpan.richSpanStyle.spanStyle(richTextConfig))) {
         val newText = text.substring(index, index + richSpan.text.length)
         richSpan.text = newText
         richSpan.textRange = TextRange(index, index + richSpan.text.length)
@@ -102,7 +102,7 @@ internal fun AnnotatedString.Builder.append(
             append(newText)
         }
 
-        if (richSpan.style !is RichSpanStyle.Default) {
+        if (richSpan.richSpanStyle !is RichSpanStyle.Default) {
             onStyledRichSpan(richSpan)
         }
 
@@ -147,7 +147,7 @@ internal fun AnnotatedString.Builder.appendRichSpan(
         if (
             previousRichSpan != null &&
             previousRichSpan!!.spanStyle == richSpan.spanStyle &&
-            previousRichSpan!!.style == richSpan.style &&
+            previousRichSpan!!.richSpanStyle == richSpan.richSpanStyle &&
             previousRichSpan!!.children.isEmpty() &&
             richSpan.children.isEmpty()
         ) {
@@ -170,7 +170,7 @@ internal fun AnnotatedString.Builder.appendRichSpan(
     ) {
         val firstChild = richSpanList.first()
         parent.spanStyle = parent.spanStyle.merge(firstChild.spanStyle)
-        parent.style = firstChild.style
+        parent.richSpanStyle = firstChild.richSpanStyle
         parent.text = firstChild.text
         parent.textRange = firstChild.textRange
         parent.children.clear()
@@ -188,7 +188,7 @@ internal fun AnnotatedString.Builder.append(
 ): Int {
     var index = startIndex
 
-    withStyle(richSpan.spanStyle.merge(richSpan.style.spanStyle(richTextConfig))) {
+    withStyle(richSpan.spanStyle.merge(richSpan.richSpanStyle.spanStyle(richTextConfig))) {
         richSpan.textRange = TextRange(index, index + richSpan.text.length)
         if (
             !selection.collapsed &&
@@ -222,11 +222,11 @@ internal fun AnnotatedString.Builder.append(
 ): Int {
     var index = startIndex
 
-    withStyle(richSpan.spanStyle.merge(richSpan.style.spanStyle(richTextConfig))) {
+    withStyle(richSpan.spanStyle.merge(richSpan.richSpanStyle.spanStyle(richTextConfig))) {
         richSpan.textRange = TextRange(index, index + richSpan.text.length)
         append(richSpan.text)
 
-        if (richSpan.style !is RichSpanStyle.Default) {
+        if (richSpan.richSpanStyle !is RichSpanStyle.Default) {
             onStyledRichSpan(richSpan)
         }
 

@@ -7,7 +7,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.outlined.Article
+import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material.icons.outlined.Code
+import androidx.compose.material.icons.outlined.FormatAlignCenter
+import androidx.compose.material.icons.outlined.FormatAlignLeft
+import androidx.compose.material.icons.outlined.FormatAlignRight
+import androidx.compose.material.icons.outlined.FormatBold
+import androidx.compose.material.icons.outlined.FormatItalic
+import androidx.compose.material.icons.outlined.FormatListBulleted
+import androidx.compose.material.icons.outlined.FormatListNumbered
+import androidx.compose.material.icons.outlined.FormatSize
+import androidx.compose.material.icons.outlined.FormatStrikethrough
+import androidx.compose.material.icons.outlined.FormatUnderlined
+import androidx.compose.material.icons.outlined.Spellcheck
+import androidx.compose.material.icons.outlined.Subject
+import androidx.compose.material.icons.outlined.Title
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mohamedrejeb.richeditor.model.HeadingStyle
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.sample.common.richeditor.SpellCheck
 
@@ -229,6 +245,45 @@ fun RichTextStyleRow(
                 },
                 isSelected = state.isCodeSpan,
                 icon = Icons.Outlined.Code,
+            )
+        }
+
+        item {
+            Box(
+                Modifier
+                    .height(24.dp)
+                    .width(1.dp)
+                    .background(Color(0xFF393B3D))
+            )
+        }
+
+        item {
+            RichTextStyleButton(
+                onClick = {
+                    state.setHeadingStyle(HeadingStyle.Normal)
+                },
+                isSelected = state.currentHeadingStyle == HeadingStyle.Normal,
+                icon = Icons.Outlined.Article,
+            )
+        }
+
+        item {
+            RichTextStyleButton(
+                onClick = {
+                    state.setHeadingStyle(HeadingStyle.H1)
+                },
+                isSelected = state.currentHeadingStyle == HeadingStyle.H1,
+                icon = Icons.Outlined.Title,
+            )
+        }
+
+        item {
+            RichTextStyleButton(
+                onClick = {
+                    state.setHeadingStyle(HeadingStyle.H2)
+                },
+                isSelected = state.currentHeadingStyle == HeadingStyle.H2,
+                icon = Icons.Outlined.Subject,
             )
         }
     }

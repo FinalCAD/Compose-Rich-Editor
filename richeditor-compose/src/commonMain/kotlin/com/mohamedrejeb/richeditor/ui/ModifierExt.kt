@@ -21,7 +21,7 @@ internal fun Modifier.drawRichSpanStyle(
 
                 if (
                     lastAddedItem != null &&
-                    lastAddedItem.first::class == richSpan.style::class &&
+                    lastAddedItem.first::class == richSpan.richSpanStyle::class &&
                     lastAddedItem.second.end == richSpan.textRange.start
                 ) {
                     styledRichSpanList[styledRichSpanList.lastIndex] = Pair(
@@ -29,7 +29,7 @@ internal fun Modifier.drawRichSpanStyle(
                         TextRange(lastAddedItem.second.start, richSpan.textRange.end)
                     )
                 } else {
-                    styledRichSpanList.add(Pair(richSpan.style, richSpan.textRange))
+                    styledRichSpanList.add(Pair(richSpan.richSpanStyle, richSpan.textRange))
                 }
             }
 

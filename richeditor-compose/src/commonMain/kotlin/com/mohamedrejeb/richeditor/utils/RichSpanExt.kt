@@ -81,8 +81,8 @@ internal fun List<RichSpan>.getCommonRichStyle(): RichSpanStyle? {
     for (index in indices) {
         val item = get(index)
         if (richSpanStyle == null) {
-            richSpanStyle = item.style
-        } else if (richSpanStyle::class != item.style::class) {
+            richSpanStyle = item.richSpanStyle
+        } else if (richSpanStyle::class != item.richSpanStyle::class) {
             richSpanStyle = null
             break
         }

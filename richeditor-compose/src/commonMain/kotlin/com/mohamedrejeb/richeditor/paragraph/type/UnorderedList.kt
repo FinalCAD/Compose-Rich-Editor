@@ -2,17 +2,16 @@ package com.mohamedrejeb.richeditor.paragraph.type
 
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.mohamedrejeb.richeditor.model.RichSpan
+import com.mohamedrejeb.richeditor.model.RichTextConfig
 import com.mohamedrejeb.richeditor.paragraph.RichParagraph
 
-internal class UnorderedList : ParagraphType {
+internal class UnorderedList : ParagraphType, ConfigurableListLevel {
 
-    override var style: ParagraphStyle =
-        getParagraphStyle()
+    override var level: Int = 1
 
-    private fun getParagraphStyle() =
+    override fun getStyle(config: RichTextConfig): ParagraphStyle =
         ParagraphStyle(
             textIndent = TextIndent(
                 firstLine = 38.sp,
@@ -20,15 +19,15 @@ internal class UnorderedList : ParagraphType {
             )
         )
 
-    override var startRichSpan: RichSpan =
+    override val startRichSpan: RichSpan =
         RichSpan(
             paragraph = RichParagraph(type = this),
             text = "• ",
         )
 
     override fun getNextParagraphType(): ParagraphType =
-        UnorderedList()
+        UnorderedList().also { it.level = this.level }
 
     override fun copy(): ParagraphType =
-        UnorderedList()
+        UnorderedList().also { it.level = this.level }
 }

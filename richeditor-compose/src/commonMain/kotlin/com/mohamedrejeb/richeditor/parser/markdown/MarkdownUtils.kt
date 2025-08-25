@@ -1,7 +1,6 @@
 package com.mohamedrejeb.richeditor.parser.markdown
 
 import com.mohamedrejeb.richeditor.utils.fastForEach
-import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
@@ -17,7 +16,8 @@ internal fun encodeMarkdownToRichText(
     onOpenNode: (node: ASTNode) -> Unit,
     onCloseNode: (node: ASTNode) -> Unit,
     onText: (text: String) -> Unit,
-    onHtml: (html: String) -> Unit,
+    onHtmlTag: (htmlTag: String) -> Unit = {},
+    onHtmlBlock: (htmlBlock: String) -> Unit = {},
 ) {
     val parser = MarkdownParser(GFMFlavourDescriptor())
     val tree = parser.buildMarkdownTreeFromString(markdown)
@@ -28,7 +28,8 @@ internal fun encodeMarkdownToRichText(
             onOpenNode = onOpenNode,
             onCloseNode = onCloseNode,
             onText = onText,
-            onHtml = onHtml,
+            onHtmlTag = onHtmlTag,
+            onHtmlBlock = onHtmlBlock,
         )
     }
 }
@@ -39,7 +40,8 @@ private fun encodeMarkdownNodeToRichText(
     onOpenNode: (node: ASTNode) -> Unit,
     onCloseNode: (node: ASTNode) -> Unit,
     onText: (text: String) -> Unit,
-    onHtml: (html: String) -> Unit,
+    onHtmlTag: (htmlTag: String) -> Unit,
+    onHtmlBlock: (htmlBlock: String) -> Unit,
 ) {
     when (node.type) {
         MarkdownTokenTypes.TEXT -> onText(node.getTextInNode(markdown).toString())
@@ -70,7 +72,8 @@ private fun encodeMarkdownNodeToRichText(
                     onOpenNode = onOpenNode,
                     onCloseNode = onCloseNode,
                     onText = onText,
-                    onHtml = onHtml,
+                    onHtmlTag = onHtmlTag,
+                    onHtmlBlock = onHtmlBlock,
                 )
             }
             onCloseNode(node)
@@ -87,7 +90,8 @@ private fun encodeMarkdownNodeToRichText(
                     onOpenNode = onOpenNode,
                     onCloseNode = onCloseNode,
                     onText = onText,
-                    onHtml = onHtml,
+                    onHtmlTag = onHtmlTag,
+                    onHtmlBlock = onHtmlBlock,
                 )
             }
             onCloseNode(node)
@@ -108,8 +112,11 @@ private fun encodeMarkdownNodeToRichText(
             onText(text ?: "")
             onCloseNode(node)
         }
-        MarkdownElementTypes.HTML_BLOCK, MarkdownTokenTypes.HTML_TAG -> {
-            onHtml(node.getTextInNode(markdown).toString())
+        MarkdownElementTypes.HTML_BLOCK -> {
+            onHtmlBlock(node.getTextInNode(markdown).toString())
+        }
+        MarkdownTokenTypes.HTML_TAG -> {
+            onHtmlTag(node.getTextInNode(markdown).toString())
         }
         else -> {
             onOpenNode(node)
@@ -120,10 +127,20 @@ private fun encodeMarkdownNodeToRichText(
                     onOpenNode = onOpenNode,
                     onCloseNode = onCloseNode,
                     onText = onText,
-                    onHtml = onHtml,
+                    onHtmlTag = onHtmlTag,
+                    onHtmlBlock = onHtmlBlock,
                 )
             }
             onCloseNode(node)
         }
     }
+}
+
+internal fun correctMarkdownText(text: String): String {
+    // Nettoyer les lignes vides multiples et espaces de fin de ligne
+    return text
+        .replace("\r\n", "\n")
+        .replace("\r", "\n")
+        .replace(Regex("\n{3,}"), "\n\n")
+        .replace(Regex("[\t ]+\n"), "\n")
 }

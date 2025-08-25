@@ -10,6 +10,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.isSpecified
+import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
 import com.mohamedrejeb.richeditor.utils.fastForEachIndexed
 import com.mohamedrejeb.richeditor.utils.getBoundingBoxes
@@ -144,6 +146,64 @@ interface RichSpanStyle {
             var result = cornerRadius.hashCode()
             result = 31 * result + strokeWidth.hashCode()
             result = 31 * result + padding.hashCode()
+            return result
+        }
+    }
+
+    class Image(
+        val model: Any,
+        width: TextUnit,
+        height: TextUnit,
+        val contentDescription: String? = null,
+    ) : RichSpanStyle {
+
+        init {
+            require(width.isSpecified || height.isSpecified) {
+                "At least one of the width or height should be specified"
+            }
+
+            require(width.value >= 0 || height.value >= 0) {
+                "The width and height should be greater than or equal to 0"
+            }
+
+            require(width.value.isFinite() || height.value.isFinite()) {
+                "The width and height should be finite"
+            }
+        }
+
+        var width: TextUnit = width
+            private set
+
+        var height: TextUnit = height
+            private set
+
+        override val spanStyle: (RichTextConfig) -> SpanStyle = { SpanStyle() }
+
+        override fun DrawScope.drawCustomStyle(
+            layoutResult: TextLayoutResult,
+            textRange: TextRange,
+            richTextConfig: RichTextConfig,
+            topPadding: Float,
+            startPadding: Float,
+        ) = Unit
+
+        override val acceptNewTextInTheEdges: Boolean = false
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is Image) return false
+            if (model != other.model) return false
+            if (width != other.width) return false
+            if (height != other.height) return false
+            if (contentDescription != other.contentDescription) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = model.hashCode()
+            result = 31 * result + width.hashCode()
+            result = 31 * result + height.hashCode()
+            result = 31 * result + (contentDescription?.hashCode() ?: 0)
             return result
         }
     }

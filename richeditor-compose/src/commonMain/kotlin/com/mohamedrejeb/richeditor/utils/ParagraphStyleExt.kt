@@ -9,6 +9,25 @@ import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.isUnspecified
 import com.mohamedrejeb.richeditor.paragraph.RichParagraph
 
+internal fun ParagraphStyle.diff(
+    other: ParagraphStyle,
+): ParagraphStyle {
+    return ParagraphStyle(
+        textAlign = if (this.textAlign != other.textAlign) this.textAlign else TextAlign.Unspecified,
+        textDirection = if (this.textDirection != other.textDirection) this.textDirection else
+            TextDirection.Unspecified,
+        lineHeight = if (this.lineHeight != other.lineHeight) this.lineHeight else
+            androidx.compose.ui.unit.TextUnit.Unspecified,
+        textIndent = if (this.textIndent != other.textIndent) this.textIndent else null,
+        platformStyle = if (this.platformStyle != other.platformStyle) this.platformStyle else null,
+        lineHeightStyle = if (this.lineHeightStyle != other.lineHeightStyle) this.lineHeightStyle else
+            null,
+        lineBreak = if (this.lineBreak != other.lineBreak) this.lineBreak else LineBreak.Unspecified,
+        hyphens = if (this.hyphens != other.hyphens) this.hyphens else Hyphens.Unspecified,
+    )
+}
+
+
 internal fun ParagraphStyle.unmerge(
     other: ParagraphStyle?,
 ): ParagraphStyle {
