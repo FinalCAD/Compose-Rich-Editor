@@ -3,9 +3,11 @@ package com.mohamedrejeb.richeditor.sample.common.markdowneditor
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.sample.common.components.RichTextStyleRow
@@ -17,7 +19,7 @@ fun RichTextToMarkdown(
     richTextState: RichTextState,
     modifier: Modifier = Modifier,
 ) {
-    val html by remember(richTextState.annotatedString) {
+    val markdown by remember(richTextState.annotatedString) {
         mutableStateOf(richTextState.toMarkdown())
     }
 
@@ -50,12 +52,13 @@ fun RichTextToMarkdown(
                     .fillMaxWidth()
                     .weight(1f),
                 state = richTextState,
+                textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
             )
         }
 
         Spacer(Modifier.width(8.dp))
 
-        Divider(
+        HorizontalDivider(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(2.dp)
@@ -84,12 +87,18 @@ fun RichTextToMarkdown(
                     .padding(vertical = 12.dp, horizontal = 12.dp)
             ) {
                 item {
-                    Text(
-                        text = html,
+                    SelectionContainer(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                    )
+                    ) {
+                        Text(
+                            text = markdown,
+                            style = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
+                    }
                 }
             }
         }

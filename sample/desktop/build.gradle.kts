@@ -2,22 +2,18 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.composeMultiplatform)
 }
 
 kotlin {
     jvm {
-        jvmToolchain(11)
         withJava()
     }
-    sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(project(":sample:common"))
-                implementation(compose.desktop.currentOs)
-            }
-        }
-        val jvmTest by getting
+
+    sourceSets.jvmMain.dependencies {
+        implementation(projects.sample.common)
+        implementation(compose.desktop.currentOs)
     }
 }
 

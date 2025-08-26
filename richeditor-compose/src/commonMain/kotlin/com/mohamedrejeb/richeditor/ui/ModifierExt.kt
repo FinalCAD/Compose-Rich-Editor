@@ -3,9 +3,9 @@ package com.mohamedrejeb.richeditor.ui
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.util.fastForEach
 import com.mohamedrejeb.richeditor.model.RichSpanStyle
 import com.mohamedrejeb.richeditor.model.RichTextState
-import com.mohamedrejeb.richeditor.utils.fastForEach
 
 internal fun Modifier.drawRichSpanStyle(
     richTextState: RichTextState,
@@ -44,7 +44,7 @@ internal fun Modifier.drawRichSpanStyle(
                                 textRange = textRange,
                                 topPadding = topPadding,
                                 startPadding = startPadding,
-                                richTextConfig = richTextState.richTextConfig,
+                                richTextConfig = richTextState.config,
                             )
                         }
                     }

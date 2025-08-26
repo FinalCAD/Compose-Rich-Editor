@@ -4,11 +4,11 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.util.fastForEachIndexed
 import com.mohamedrejeb.richeditor.model.RichSpanStyle
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.paragraph.type.ParagraphType.Companion.startText
 import com.mohamedrejeb.richeditor.utils.append
-import com.mohamedrejeb.richeditor.utils.fastForEachIndexed
 import kotlin.math.max
 import kotlin.math.min
 
@@ -35,7 +35,7 @@ internal class RichTextClipboardManager(
                 withStyle(
                     richParagraphStyle.paragraphStyle.merge(
                         richParagraphStyle.type.getStyle(
-                            richTextState.richTextConfig
+                            richTextState.config
                         )
                     )
                 ) {
@@ -56,7 +56,7 @@ internal class RichTextClipboardManager(
                             richSpanList = richParagraphStyle.children,
                             startIndex = index,
                             selection = selection,
-                            richTextConfig = richTextState.richTextConfig,
+                            richTextConfig = richTextState.config
                         )
                         if (!richTextState.singleParagraphMode) {
                             if (i != richTextState.richParagraphList.lastIndex) {

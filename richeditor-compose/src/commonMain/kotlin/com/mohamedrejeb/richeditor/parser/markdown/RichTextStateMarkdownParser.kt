@@ -4,6 +4,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.model.HeadingStyle
 import com.mohamedrejeb.richeditor.model.RichSpan
@@ -16,7 +18,6 @@ import com.mohamedrejeb.richeditor.paragraph.type.OrderedList
 import com.mohamedrejeb.richeditor.paragraph.type.ParagraphType
 import com.mohamedrejeb.richeditor.paragraph.type.UnorderedList
 import com.mohamedrejeb.richeditor.parser.RichTextStateParser
-import com.mohamedrejeb.richeditor.parser.html.BrElement
 import com.mohamedrejeb.richeditor.parser.html.RichTextStateHtmlParser
 import com.mohamedrejeb.richeditor.parser.html.htmlElementsSpanStyleEncodeMap
 import com.mohamedrejeb.richeditor.parser.utils.BoldSpanStyle
@@ -34,8 +35,6 @@ import com.mohamedrejeb.richeditor.parser.utils.H6ParagraphStyle
 import com.mohamedrejeb.richeditor.parser.utils.H6SpanStyle
 import com.mohamedrejeb.richeditor.parser.utils.ItalicSpanStyle
 import com.mohamedrejeb.richeditor.parser.utils.StrikethroughSpanStyle
-import com.mohamedrejeb.richeditor.utils.fastForEach
-import com.mohamedrejeb.richeditor.utils.fastForEachIndexed
 import org.intellij.markdown.MarkdownElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -312,14 +311,14 @@ internal object RichTextStateMarkdownParser : RichTextStateParser<String> {
                 if (isClosingTag) {
                     openedHtmlTags.removeLastOrNull()
 
-                    if (tagName != BrElement)
+                    if (tagName != "br")
                         currentRichSpan = currentRichSpan?.parent
                 } else {
                     openedHtmlTags.add(tag)
 
                     val tagSpanStyle = htmlElementsSpanStyleEncodeMap[tagName]
 
-                    if (tagName != BrElement) {
+                    if (tagName != "br") {
                         val currentRichParagraph = richParagraphList.last()
                         val newRichSpan = RichSpan(paragraph = currentRichParagraph)
                         newRichSpan.spanStyle = tagSpanStyle ?: SpanStyle()

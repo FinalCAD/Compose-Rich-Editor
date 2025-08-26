@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
@@ -16,7 +15,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.*
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -25,7 +27,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.mohamedrejeb.richeditor.model.RichTextState
 import kotlinx.coroutines.CoroutineScope
-
 
 /**
  * Basic composable that enables users to edit rich text via hardware or software keyboard, but provides no decorations like hint or placeholder.
@@ -81,7 +82,7 @@ import kotlinx.coroutines.CoroutineScope
  *
  */
 @Composable
-fun BasicRichTextEditor(
+public fun BasicRichTextEditor(
     state: RichTextState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -173,7 +174,7 @@ fun BasicRichTextEditor(
  *
  */
 @Composable
-fun BasicRichTextEditor(
+public fun BasicRichTextEditor(
     state: RichTextState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -194,7 +195,6 @@ fun BasicRichTextEditor(
     contentPadding: PaddingValues
 ) {
     val density = LocalDensity.current
-    val localTextStyle = LocalTextStyle.current
     val layoutDirection = LocalLayoutDirection.current
     val clipboardManager = LocalClipboardManager.current
     val richClipboardManager = remember(state) {
@@ -239,31 +239,37 @@ fun BasicRichTextEditor(
                 state.onTextFieldValueChange(it)
             },
             modifier = modifier
+                .onPreviewKeyEvent { event ->
+                    if (readOnly)
+                        return@onPreviewKeyEvent false
+
+                    state.onPreviewKeyEvent(event)
+                }
                 .drawRichSpanStyle(
                     richTextState = state,
                     topPadding = with(density) { contentPadding.calculateTopPadding().toPx() },
                     startPadding = with(density) { contentPadding.calculateStartPadding(layoutDirection).toPx() },
                 )
                 .then(
-                    if (!readOnly) Modifier
-                    else Modifier.focusProperties { canFocus = false }
+                    if (!readOnly)
+                        Modifier
+                    else
+                        Modifier.focusProperties { canFocus = false }
                 )
                 .then(
-                    if (singleParagraph) {
+                    if (singleParagraph)
                         Modifier
-                    } else {
+                    else
                         Modifier
                             // Workaround for Desktop to fix a bug in BasicTextField where it doesn't select the correct text
                             // when the text contains multiple paragraphs.
                             .adjustTextIndicatorOffset(
                                 state = state,
                                 contentPadding = contentPadding,
-                                textStyle = localTextStyle,
                                 density = density,
                                 layoutDirection = layoutDirection,
                                 scope = rememberCoroutineScope()
                             )
-                    }
                 ),
             enabled = enabled,
             readOnly = readOnly,
@@ -291,7 +297,6 @@ fun BasicRichTextEditor(
 internal expect fun Modifier.adjustTextIndicatorOffset(
     state: RichTextState,
     contentPadding: PaddingValues,
-    textStyle: TextStyle,
     density: Density,
     layoutDirection: LayoutDirection,
     scope: CoroutineScope,
@@ -310,3 +315,5 @@ internal suspend fun adjustTextIndicatorOffset(
         ),
     )
 }
+
+public typealias RichTextChangedListener = (RichTextState) -> Unit

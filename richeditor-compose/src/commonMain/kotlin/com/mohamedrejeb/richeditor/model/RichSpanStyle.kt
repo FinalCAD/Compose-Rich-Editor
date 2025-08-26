@@ -11,13 +11,12 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isSpecified
-import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.sp
-import com.mohamedrejeb.richeditor.utils.fastForEachIndexed
+import androidx.compose.ui.util.fastForEachIndexed
 import com.mohamedrejeb.richeditor.utils.getBoundingBoxes
 
-interface RichSpanStyle {
-    val spanStyle: (RichTextConfig) -> SpanStyle
+public interface RichSpanStyle {
+    public val spanStyle: (RichTextConfig) -> SpanStyle
 
     /**
      * If true, the user can add new text in the edges of the span,
@@ -25,38 +24,38 @@ interface RichSpanStyle {
      * If false, the user can't add new text in the edges of the span,
      * For example, if the span is a "Hello" link and the user adds "World" in the end, the "World" will be added in a separate a span,
      */
-    val acceptNewTextInTheEdges: Boolean
+    public val acceptNewTextInTheEdges: Boolean
 
-    fun DrawScope.drawCustomStyle(
+    public fun DrawScope.drawCustomStyle(
         layoutResult: TextLayoutResult,
         textRange: TextRange,
         richTextConfig: RichTextConfig,
         topPadding: Float = 0f,
         startPadding: Float = 0f,
-    )
+    ): Unit
 
-    class Link(
-        val url: String,
+    public class Link(
+        public val url: String,
     ) : RichSpanStyle {
-        override val spanStyle: (RichTextConfig) -> SpanStyle = {
+        public override val spanStyle: (RichTextConfig) -> SpanStyle = {
             SpanStyle(
                 color = it.linkColor,
                 textDecoration = it.linkTextDecoration,
             )
         }
 
-        override fun DrawScope.drawCustomStyle(
+        public override fun DrawScope.drawCustomStyle(
             layoutResult: TextLayoutResult,
             textRange: TextRange,
             richTextConfig: RichTextConfig,
             topPadding: Float,
             startPadding: Float
-        ) = Unit
+        ): Unit = Unit
 
-        override val acceptNewTextInTheEdges: Boolean =
+        public override val acceptNewTextInTheEdges: Boolean =
             false
 
-        override fun equals(other: Any?): Boolean {
+        public override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Link) return false
 
@@ -65,32 +64,32 @@ interface RichSpanStyle {
             return true
         }
 
-        override fun hashCode(): Int {
+        public override fun hashCode(): Int {
             return url.hashCode()
         }
     }
 
-    class Code(
+    public class Code(
         private val cornerRadius: TextUnit = 8.sp,
         private val strokeWidth: TextUnit = 1.sp,
         private val padding: TextPaddingValues = TextPaddingValues(horizontal = 2.sp, vertical = 2.sp)
     ): RichSpanStyle {
-        override val spanStyle: (RichTextConfig) -> SpanStyle = {
+        public override val spanStyle: (RichTextConfig) -> SpanStyle = {
             SpanStyle(
-                color = it.codeColor,
+                color = it.codeSpanColor,
             )
         }
 
-        override fun DrawScope.drawCustomStyle(
+        public override fun DrawScope.drawCustomStyle(
             layoutResult: TextLayoutResult,
             textRange: TextRange,
             richTextConfig: RichTextConfig,
             topPadding: Float,
             startPadding: Float,
-        ) {
+        ): Unit {
             val path = Path()
-            val backgroundColor = richTextConfig.codeBackgroundColor
-            val strokeColor = richTextConfig.codeStrokeColor
+            val backgroundColor = richTextConfig.codeSpanBackgroundColor
+            val strokeColor = richTextConfig.codeSpanStrokeColor
             val cornerRadius = CornerRadius(cornerRadius.toPx())
             val boxes = layoutResult.getBoundingBoxes(
                 startOffset = textRange.start,
@@ -128,10 +127,10 @@ interface RichSpanStyle {
             }
         }
 
-        override val acceptNewTextInTheEdges: Boolean =
+        public override val acceptNewTextInTheEdges: Boolean =
             true
 
-        override fun equals(other: Any?): Boolean {
+        public override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Code) return false
 
@@ -142,7 +141,7 @@ interface RichSpanStyle {
             return true
         }
 
-        override fun hashCode(): Int {
+        public override fun hashCode(): Int {
             var result = cornerRadius.hashCode()
             result = 31 * result + strokeWidth.hashCode()
             result = 31 * result + padding.hashCode()
@@ -150,11 +149,11 @@ interface RichSpanStyle {
         }
     }
 
-    class Image(
-        val model: Any,
+    public class Image(
+        public val model: Any,
         width: TextUnit,
         height: TextUnit,
-        val contentDescription: String? = null,
+        public val contentDescription: String? = null,
     ) : RichSpanStyle {
 
         init {
@@ -171,25 +170,25 @@ interface RichSpanStyle {
             }
         }
 
-        var width: TextUnit = width
+        public var width: TextUnit = width
             private set
 
-        var height: TextUnit = height
+        public var height: TextUnit = height
             private set
 
-        override val spanStyle: (RichTextConfig) -> SpanStyle = { SpanStyle() }
+        public override val spanStyle: (RichTextConfig) -> SpanStyle = { SpanStyle() }
 
-        override fun DrawScope.drawCustomStyle(
+        public override fun DrawScope.drawCustomStyle(
             layoutResult: TextLayoutResult,
             textRange: TextRange,
             richTextConfig: RichTextConfig,
             topPadding: Float,
             startPadding: Float,
-        ) = Unit
+        ): Unit = Unit
 
-        override val acceptNewTextInTheEdges: Boolean = false
+        public override val acceptNewTextInTheEdges: Boolean = false
 
-        override fun equals(other: Any?): Boolean {
+        public override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Image) return false
             if (model != other.model) return false
@@ -199,7 +198,7 @@ interface RichSpanStyle {
             return true
         }
 
-        override fun hashCode(): Int {
+        public override fun hashCode(): Int {
             var result = model.hashCode()
             result = 31 * result + width.hashCode()
             result = 31 * result + height.hashCode()
@@ -208,23 +207,23 @@ interface RichSpanStyle {
         }
     }
 
-    object Default : RichSpanStyle {
-        override val spanStyle: (RichTextConfig) -> SpanStyle =
+    public object Default : RichSpanStyle {
+        public override val spanStyle: (RichTextConfig) -> SpanStyle =
             { SpanStyle() }
 
-        override fun DrawScope.drawCustomStyle(
+        public override fun DrawScope.drawCustomStyle(
             layoutResult: TextLayoutResult,
             textRange: TextRange,
             richTextConfig: RichTextConfig,
             topPadding: Float,
             startPadding: Float
-        ) = Unit
+        ): Unit = Unit
 
-        override val acceptNewTextInTheEdges: Boolean =
+        public override val acceptNewTextInTheEdges: Boolean =
             true
     }
 
-    companion object {
+    public companion object {
         internal val DefaultSpanStyle = SpanStyle()
     }
 }

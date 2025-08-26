@@ -1,24 +1,34 @@
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.androidLibrary)
 }
 
 kotlin {
     applyDefaultHierarchyTemplate()
+
     androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_1_8)
         }
     }
+
     jvm("desktop") {
-        jvmToolchain(11)
+        @OptIn(ExperimentalKotlinGradlePluginApi::class)
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
-    js(IR) {
-        browser()
-    }
+
+    js(IR).browser()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs().browser()
 
     listOf(
         iosX64(),
@@ -31,31 +41,58 @@ kotlin {
         }
     }
 
-    sourceSets {
-        val commonMain by getting {
-            dependencies {
-                api(compose.runtime)
-                api(compose.foundation)
-                api(compose.ui)
-                api(compose.material)
-                api(compose.material3)
-                api(compose.materialIconsExtended)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
+    sourceSets.commonMain.dependencies {
+        api(compose.runtime)
+        api(compose.foundation)
+        api(compose.ui)
+        api(compose.material)
+        api(compose.material3)
+        api(compose.materialIconsExtended)
+        @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+        implementation(compose.components.resources)
 
-//                implementation(libs.richeditor.compose)
-                implementation(project(":richeditor-compose"))
+        implementation(projects.richeditorCompose)
+        implementation(projects.richeditorComposeCoil3)
 
-                // Voyager Navigator
-                implementation(libs.voyager.navigator)
-            }
-        }
+        // Coil
+        implementation(libs.coil.compose)
+        implementation(libs.coil.svg)
+        implementation(libs.coil.network.ktor)
 
-        val androidMain by getting {
-            dependencies {
-                api("androidx.appcompat:appcompat:1.6.1")
-            }
-        }
+        // Ktor
+        implementation(libs.ktor.client.core)
+
+        // Lifecycle
+        implementation(libs.lifecycle.viewmodel.compose)
+
+        // Navigation
+        implementation(libs.navigation.compose)
+    }
+
+    sourceSets.androidMain.dependencies {
+        api(libs.androidx.appcompat)
+
+        implementation(libs.kotlinx.coroutines.android)
+        implementation(libs.ktor.client.okhttp)
+    }
+
+    sourceSets.named("desktopMain").dependencies {
+        implementation(compose.desktop.currentOs)
+
+        implementation(libs.kotlinx.coroutines.swing)
+        implementation(libs.ktor.client.okhttp)
+    }
+
+    sourceSets.iosMain.dependencies {
+        implementation(libs.ktor.client.darwin)
+    }
+
+    sourceSets.jsMain.dependencies {
+        implementation(libs.ktor.client.js)
+    }
+
+    sourceSets.wasmJsMain.dependencies {
+        implementation(libs.ktor.client.wasm)
     }
 }
 
@@ -67,11 +104,9 @@ android {
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlin {
-        jvmToolchain(8)
     }
 }

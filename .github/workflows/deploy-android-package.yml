@@ -5,8 +5,11 @@ on:
 
 # Le bloc 'env' qui fonctionne configuration Gradle
 env:
-  gpr.user: ${{ github.actor }}
-  gpr.key: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_ACTOR: ${{ github.actor }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  VERSION: "1.0.0-rc14-finalcad"
+  #gpr.user: ${{ github.actor }}
+  #gpr.key: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   buildAndPush:
@@ -28,5 +31,7 @@ jobs:
             ~/.konan
           key: ${{ runner.os }}-${{ hashFiles('**/.lock') }}
 
-      - name: Publish to GitHub Packages
-        run: ./gradlew richeditor-compose:publishMavenPublicationToGitHubPackagesRepository
+      - name: Publish all packages to GitHub Packages
+        run: ./gradlew publish
+      #- name: Publish to GitHub Packages
+       # run: ./gradlew richeditor-compose:publishMavenPublicationToGitHubPackagesRepository
