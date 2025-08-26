@@ -3,7 +3,7 @@ name: Deploy package for Android
 on:
   workflow_dispatch:
 
-# Le bloc 'env' qui fonctionne avec votre configuration Gradle
+# Le bloc 'env' qui fonctionne configuration Gradle
 env:
   gpr.user: ${{ github.actor }}
   gpr.key: ${{ secrets.GITHUB_TOKEN }}
