@@ -11,7 +11,7 @@ import com.mohamedrejeb.richeditor.paragraph.RichParagraph
 internal class OrderedList(
     number: Int,
     startTextSpanStyle: SpanStyle = SpanStyle(),
-) : ParagraphType, ConfigurableListLevel {
+) : ParagraphType, ConfigurableListLevel, ListLevel {
 
     var number = number
         set(value) {

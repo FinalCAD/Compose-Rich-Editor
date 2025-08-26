@@ -7,7 +7,7 @@ import com.mohamedrejeb.richeditor.model.RichSpan
 import com.mohamedrejeb.richeditor.model.RichTextConfig
 import com.mohamedrejeb.richeditor.paragraph.RichParagraph
 
-internal class UnorderedList : ParagraphType, ConfigurableListLevel {
+internal class UnorderedList : ParagraphType, ConfigurableListLevel, ListLevel {
 
     override var level: Int = 1
 

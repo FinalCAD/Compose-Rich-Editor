@@ -1,12 +1,13 @@
 plugins {
-    id("io.github.gradle-nexus.publish-plugin")
+    // id("io.github.gradle-nexus.publish-plugin")
 }
 
 allprojects {
-    group = "com.mohamedrejeb.richeditor"
+    group = "com.finalcad.richeditor"
     version = System.getenv("VERSION") ?: "1.0.0-rc14-finalcad"
 }
 
+/*
 nexusPublishing {
     // Configure maven central repository
     // https://github.com/gradle-nexus/publish-plugin#publishing-to-maven-central-via-sonatype-ossrh
@@ -20,3 +21,4 @@ nexusPublishing {
         }
     }
 }
+*/

@@ -4,10 +4,21 @@ import org.gradle.kotlin.dsl.`maven-publish`
 
 plugins {
     `maven-publish`
-    signing
+    // signing
 }
 
 publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/FinalCAD/Compose-Rich-Editor")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
     // Configure all publications
     publications.withType<MavenPublication> {
         // Stub javadoc.jar artifact
@@ -20,7 +31,7 @@ publishing {
         pom {
             name.set("Compose Rich Editor")
             description.set("A Compose multiplatform library that provides a rich text editor.")
-            url.set("https://github.com/MohamedRejeb/Compose-Rich-Editor")
+            url.set("https://github.com/FinalCAD/Compose-Rich-Editor")
 
             licenses {
                 license {
@@ -30,11 +41,11 @@ publishing {
             }
             issueManagement {
                 system.set("Github")
-                url.set("https://github.com/MohamedRejeb/Compose-Rich-Editor/issues")
+                url.set("https://github.com/FinalCAD/Compose-Rich-Editor/issues")
             }
             scm {
-                connection.set("https://github.com/MohamedRejeb/Compose-Rich-Editor.git")
-                url.set("https://github.com/MohamedRejeb/Compose-Rich-Editor")
+                connection.set("https://github.com/FinalCAD/Compose-Rich-Editor.git")
+                url.set("https://github.com/FinalCAD/Compose-Rich-Editor")
             }
             developers {
                 developer {
@@ -47,6 +58,7 @@ publishing {
     }
 }
 
+/*
 signing {
     useInMemoryPgpKeys(
         System.getenv("OSSRH_GPG_SECRET_KEY_ID"),
@@ -55,8 +67,9 @@ signing {
     )
     sign(publishing.publications)
 }
+*/
 
 // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
-project.tasks.withType(AbstractPublishToMaven::class.java).configureEach {
-    dependsOn(project.tasks.withType(Sign::class.java))
-}
+// project.tasks.withType(AbstractPublishToMaven::class.java).configureEach {
+//     dependsOn(project.tasks.withType(Sign::class.java))
+// }

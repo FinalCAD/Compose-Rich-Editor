@@ -4,12 +4,12 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.paragraph.RichParagraph
+import com.mohamedrejeb.richeditor.paragraph.type.ListLevel
 import com.mohamedrejeb.richeditor.paragraph.type.OrderedList
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertIsNot
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalRichTextApi::class)
 class ListBehaviorTest {
@@ -41,8 +41,7 @@ class ListBehaviorTest {
                 RichParagraph(
                     type = OrderedList(
                         number = 1,
-                        initialLevel = 1,
-                    ),
+                    ).apply { level = 1 },
                 ).also {
                     it.children.add(
                         RichSpan(
@@ -54,8 +53,7 @@ class ListBehaviorTest {
                 RichParagraph(
                     type = OrderedList(
                         number = 1,
-                        initialLevel = 2,
-                    ),
+                    ).apply { level = 2 },
                 ).also {
                     it.children.add(
                         RichSpan(
@@ -75,14 +73,14 @@ class ListBehaviorTest {
         ))
 
         // Verify that the list level was decreased but still remains a list
-        val firstParagraphType = state.richParagraphList[0].type
+        val firstParagraphType = state.richParagraphList[0].type as ListLevel
         assertIs<OrderedList>(firstParagraphType)
-        assertEquals(1, firstParagraphType.number)
+        assertEquals(1, (firstParagraphType as OrderedList).number)
         assertEquals(1, firstParagraphType.level)
 
-        val secondParagraphType = state.richParagraphList[1].type
+        val secondParagraphType = state.richParagraphList[1].type as ListLevel
         assertIs<OrderedList>(secondParagraphType)
-        assertEquals(2, secondParagraphType.number)
+        assertEquals(2, (secondParagraphType as OrderedList).number)
         assertEquals(1, secondParagraphType.level)
     }
 }
