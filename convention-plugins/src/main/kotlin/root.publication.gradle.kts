@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
     group = "com.mohamedrejeb.richeditor"
-    version = System.getenv("VERSION") ?: "1.0.0-rc13-finalcad"
+    version = System.getenv("VERSION") ?: "1.0.0-rc14-finalcad"
 }
 
 nexusPublishing {
