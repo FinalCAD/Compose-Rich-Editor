@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
     group = "com.finalcad.richeditor"
-    version = System.getenv("VERSION") ?: "1.0.0-rc14-finalcad"
+    version = System.getenv("VERSION") ?: "1.0.0-rc16-finalcad"
 }
 
 /*

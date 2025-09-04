@@ -97,6 +97,7 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
 
                 val cssStyleMap = attributes["style"]?.let { CssEncoder.parseCssStyle(it) } ?: emptyMap()
                 val cssSpanStyle = CssEncoder.parseCssStyleMapToSpanStyle(cssStyleMap)
+
                 val tagSpanStyle = htmlElementsSpanStyleEncodeMap[name]
                 val tagParagraphStyle = htmlElementsParagraphStyleEncodeMap[name]
 
@@ -477,11 +478,6 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
 
         // Convert span style to CSS string
         val htmlStyleFormat =
-            /**
-             * If the heading type is normal, follow the previous behavior of encoding the SpanStyle to the
-             * Css span style. If it is a heading paragraph style, remove the Heading-specific [SpanStyle] features via
-             * [diff] but retain the non-heading associated [SpanStyle] properties.
-             */
             if (headingType == HeadingStyle.Normal)
                 CssDecoder.decodeSpanStyleToHtmlStylingFormat(richSpan.spanStyle)
             else
@@ -489,39 +485,70 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
         val spanCss = CssDecoder.decodeCssStyleMap(htmlStyleFormat.cssStyleMap)
         val htmlTags = htmlStyleFormat.htmlTags.filter { it !in parentFormattingTags }
 
-        val isRequireOpeningTag = tagName != "span" || tagAttributes.isNotEmpty() || spanCss.isNotEmpty()
-
-        if (isRequireOpeningTag) {
-            // Append HTML element with attributes and style
+        // Handle special tags like links, images, code
+        if (tagName == "a" || tagName == CodeSpanTagName || tagName == "img") {
+            // Add the special tag wrapper
             stringBuilder.append("<$tagName$tagAttributesStringBuilder")
-            if (spanCss.isNotEmpty()) stringBuilder.append(" style=\"$spanCss\"")
+            if (tagName != "img" && spanCss.isNotEmpty()) {
+                stringBuilder.append(" style=\"$spanCss\"")
+            }
             stringBuilder.append(">")
-        }
 
-        htmlTags.forEach {
-            stringBuilder.append("<$it>")
-        }
+            // For self-closing tags like img, don't add span content
+            if (tagName == "img") {
+                stringBuilder.append("</$tagName>")
+                return stringBuilder.toString()
+            }
 
-        // Append text
-        stringBuilder.append(KsoupEntities.encodeHtml(richSpan.text))
+            // For links and code, always add span inside
+            stringBuilder.append("<span>")
+            stringBuilder.append(KsoupEntities.encodeHtml(richSpan.text))
 
-        // Append children
-        richSpan.children.fastForEach { child ->
-            stringBuilder.append(
-                decodeRichSpanToHtml(
-                    richSpan = child,
-                    parentFormattingTags = parentFormattingTags + htmlTags,
+            // Append children
+            richSpan.children.fastForEach { child ->
+                stringBuilder.append(
+                    decodeRichSpanToHtml(
+                        richSpan = child,
+                        parentFormattingTags = parentFormattingTags + htmlTags,
+                    )
                 )
-            )
-        }
+            }
 
-        htmlTags.reversed().forEach {
-            stringBuilder.append("</$it>")
-        }
-
-        if (isRequireOpeningTag) {
-            // Append closing HTML element
+            stringBuilder.append("</span>")
             stringBuilder.append("</$tagName>")
+        } else {
+            // For regular content, always wrap in span with formatting tags
+            // Add formatting tags first (strong, em, etc.)
+            htmlTags.forEach {
+                stringBuilder.append("<$it>")
+            }
+
+            // Always add span wrapper for text content
+            stringBuilder.append("<span")
+            if (spanCss.isNotEmpty()) {
+                stringBuilder.append(" style=\"$spanCss\"")
+            }
+            stringBuilder.append(">")
+
+            // Append text
+            stringBuilder.append(KsoupEntities.encodeHtml(richSpan.text))
+
+            // Append children
+            richSpan.children.fastForEach { child ->
+                stringBuilder.append(
+                    decodeRichSpanToHtml(
+                        richSpan = child,
+                        parentFormattingTags = parentFormattingTags + htmlTags,
+                    )
+                )
+            }
+
+            stringBuilder.append("</span>")
+
+            // Close formatting tags in reverse order
+            htmlTags.reversed().forEach {
+                stringBuilder.append("</$it>")
+            }
         }
 
         return stringBuilder.toString()

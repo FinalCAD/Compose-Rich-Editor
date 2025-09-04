@@ -28,6 +28,12 @@ internal const val CodeSpanTagName: String = "code"
 internal const val OldCodeSpanTagName: String = "code-span"
 
 internal val htmlElementsSpanStyleEncodeMap: Map<String, SpanStyle> = mapOf(
+    "h1" to H1SpanStyle,
+    "h2" to H2SpanStyle,
+    "h3" to H3SpanStyle,
+    "h4" to H4SpanStyle,
+    "h5" to H5SpanStyle,
+    "h6" to H6SpanStyle,
     "b" to BoldSpanStyle,
     "strong" to BoldSpanStyle,
     "i" to ItalicSpanStyle,
@@ -41,12 +47,6 @@ internal val htmlElementsSpanStyleEncodeMap: Map<String, SpanStyle> = mapOf(
     "sup" to SuperscriptSpanStyle,
     "mark" to MarkSpanStyle,
     "small" to SmallSpanStyle,
-    "h1" to H1SpanStyle,
-    "h2" to H2SpanStyle,
-    "h3" to H3SpanStyle,
-    "h4" to H4SpanStyle,
-    "h5" to H5SpanStyle,
-    "h6" to H6SpanStyle,
 )
 
 /**
@@ -72,6 +72,12 @@ internal val htmlElementsParagraphStyleEncodeMap = mapOf(
  * @see <a href="https://www.w3schools.com/html/html_formatting.asp">HTML formatting</a>
  */
 internal val htmlElementsSpanStyleDecodeMap = mapOf(
+    H1SpanStyle to "h1",
+    H2SpanStyle to "h2",
+    H3SpanStyle to "h3",
+    H4SpanStyle to "h4",
+    H5SpanStyle to "h5",
+    H6SpanStyle to "h6",
     BoldSpanStyle to "b",
     ItalicSpanStyle to "i",
     UnderlineSpanStyle to "u",
@@ -80,10 +86,4 @@ internal val htmlElementsSpanStyleDecodeMap = mapOf(
     SuperscriptSpanStyle to "sup",
     MarkSpanStyle to "mark",
     SmallSpanStyle to "small",
-    H1SpanStyle to "h1",
-    H2SpanStyle to "h2",
-    H3SpanStyle to "h3",
-    H4SpanStyle to "h4",
-    H5SpanStyle to "h5",
-    H6SpanStyle to "h6",
 )

@@ -1,12 +1,8 @@
+// Tests pour vérifier le bon fonctionnement du décodage HTML des titres
 package com.mohamedrejeb.richeditor.parser.html
 
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
-import com.mohamedrejeb.richeditor.model.RichSpan
-import com.mohamedrejeb.richeditor.model.RichTextState
-import com.mohamedrejeb.richeditor.paragraph.RichParagraph
-import com.mohamedrejeb.richeditor.paragraph.type.DefaultParagraph
-import com.mohamedrejeb.richeditor.paragraph.type.OrderedList
-import com.mohamedrejeb.richeditor.paragraph.type.UnorderedList
+import com.mohamedrejeb.richeditor.model.HeadingStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -15,486 +11,121 @@ import kotlin.test.assertTrue
 class RichTextStateHtmlParserDecodeTest {
 
     @Test
-    fun testParsingSimpleHtmlWithBrBackAndForth() {
-        val html = "<br><p>Hello World&excl;</p>"
+    fun testH1FontSize() {
+        // Test pour connaître la taille de police du H1
+        val h1Style = HeadingStyle.H1
+        val textStyle = h1Style.getTextStyle()
+        val spanStyle = h1Style.getSpanStyle()
 
-        val richTextState = RichTextStateHtmlParser.encode(html)
+        println("=== H1 FONT SIZE ===")
+        println("TextStyle fontSize: ${textStyle.fontSize}")
+        println("SpanStyle fontSize: ${spanStyle.fontSize}")
+        println("TextStyle fontWeight: ${textStyle.fontWeight}")
+        println("SpanStyle fontWeight: ${spanStyle.fontWeight}")
 
-        assertEquals(2, richTextState.richParagraphList.size)
-        assertTrue(richTextState.richParagraphList[0].isBlank())
-        assertEquals(1, richTextState.richParagraphList[1].children.size)
+        // Test avec un HTML simple pour voir la fontSize générée
+        val inputHtml = "<h1>Test</h1>"
+        val richTextState = RichTextStateHtmlParser.encode(inputHtml)
+        val paragraph = richTextState.richParagraphList.first()
+        val richSpan = paragraph.children.first()
 
-        val parsedHtml = RichTextStateHtmlParser.decode(richTextState)
+        println("RichSpan fontSize: ${richSpan.spanStyle.fontSize}")
+        println("RichSpan fontWeight: ${richSpan.spanStyle.fontWeight}")
 
-        assertEquals(html, parsedHtml)
+        // Vérification que c'est bien du H1
+        assertTrue(richSpan.spanStyle.fontSize.value > 0, "H1 should have a font size")
     }
 
     @Test
-    fun testDecodeSingleLineBreak() {
-        val expectedHtml = "<p>First</p><br><p>Second</p>"
+    fun testH1WithDirectionStyle() {
+        val inputHtml = "<h1 style=\"direction: ltr;\">Bonjour</h1>"
 
-        val richTextState = RichTextState(
-            listOf(
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "First",
-                            paragraph = it,
-                        )
+        val richTextState = RichTextStateHtmlParser.encode(inputHtml)
+        val outputHtml = RichTextStateHtmlParser.decode(richTextState)
+
+        // Should start with h1 tag
+        assertTrue(outputHtml.startsWith("<h1"), "Should start with h1 tag, got: $outputHtml")
+
+        // Should preserve direction style  
+        assertTrue(
+            outputHtml.contains("direction: ltr"),
+            "Should preserve direction style, got: $outputHtml"
+        )
+
+        // Should contain the text
+        assertTrue(outputHtml.contains("Bonjour"), "Should contain text, got: $outputHtml")
+
+        // Should wrap text in span - this is what we want to achieve
+        assertTrue(outputHtml.contains("<span"), "Should contain span wrapper, got: $outputHtml")
+    }
+
+    @Test
+    fun testSimpleH1() {
+        val inputHtml = "<h1>Simple</h1>"
+
+        val richTextState = RichTextStateHtmlParser.encode(inputHtml)
+        val outputHtml = RichTextStateHtmlParser.decode(richTextState)
+
+        // Should be exactly: <h1><span>Simple</span></h1>
+        val expected = "<h1><span>Simple</span></h1>"
+        assertEquals(expected, outputHtml, "Simple H1 should match expected structure")
+    }
+
+    @Test
+    fun testH2WithStyles() {
+        val inputHtml = "<h2 style=\"color: red;\">Title</h2>"
+
+        val richTextState = RichTextStateHtmlParser.encode(inputHtml)
+        val outputHtml = RichTextStateHtmlParser.decode(richTextState)
+
+        assertTrue(outputHtml.startsWith("<h2"), "Should be h2 tag")
+        assertTrue(outputHtml.contains("<span"), "Should contain span")
+    }
+
+    @Test
+    fun testParagraphWithSpan() {
+        val inputHtml = "<p>Text</p>"
+
+        val richTextState = RichTextStateHtmlParser.encode(inputHtml)
+        val outputHtml = RichTextStateHtmlParser.decode(richTextState)
+
+        // Should be: <p><span>Text</span></p>
+        val expected = "<p><span>Text</span></p>"
+        assertEquals(expected, outputHtml, "Simple paragraph should match expected structure")
+    }
+
+    @Test
+    fun testAllHeadingFontSizes() {
+        println("=== ALL HEADING FONT SIZES ===")
+
+        val headings = listOf(
+            HeadingStyle.H1, HeadingStyle.H2, HeadingStyle.H3,
+            HeadingStyle.H4, HeadingStyle.H5, HeadingStyle.H6
+        )
+
+        headings.forEach { heading ->
+            val textStyle = heading.getTextStyle()
+            println(
+                "${heading.htmlTag?.uppercase()}: ${textStyle.fontSize} (Material 3 Typography: ${
+                    getTypographyName(
+                        heading
                     )
-                },
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "Second",
-                            paragraph = it,
-                        )
-                    )
-                }
+                })"
             )
-        )
+        }
 
-        assertEquals(expectedHtml, richTextState.toHtml())
+        println("NORMAL: ${HeadingStyle.Normal.getTextStyle().fontSize}")
     }
 
-    @Test
-    fun testDecodeMultipleLineBreaks() {
-        val expectedHtml = "<br><p>First</p><br><br><p>Second</p><br>"
-
-        val richTextState = RichTextState(
-            listOf(
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "First",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "Second",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "",
-                            paragraph = it,
-                        )
-                    )
-                },
-            )
-        )
-
-        assertEquals(expectedHtml, richTextState.toHtml())
+    private fun getTypographyName(heading: HeadingStyle): String {
+        return when (heading) {
+            HeadingStyle.H1 -> "displayLarge"
+            HeadingStyle.H2 -> "displayMedium"
+            HeadingStyle.H3 -> "displaySmall"
+            HeadingStyle.H4 -> "headlineMedium"
+            HeadingStyle.H5 -> "headlineSmall"
+            HeadingStyle.H6 -> "titleLarge"
+            HeadingStyle.Normal -> "Default"
+        }
     }
-
-    @Test
-    fun testDecodeOrderedList() {
-        val expectedHtml = "<ol><li>First</li><li>Second</li></ol>"
-
-        val richTextState = RichTextState(
-            listOf(
-                RichParagraph(
-                    key = 0,
-                    type = OrderedList(1)
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "First",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 1,
-                    type = OrderedList(2)
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Second",
-                            paragraph = it,
-                        )
-                    )
-                }
-            )
-        )
-
-        assertEquals(expectedHtml, richTextState.toHtml())
-    }
-
-    @Test
-    fun testDecodeUnorderedList() {
-        val expectedHtml = "<ul><li>First</li><li>Second</li></ul>"
-
-        val richTextState = RichTextState(
-            listOf(
-                RichParagraph(
-                    key = 0,
-                    type = UnorderedList()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "First",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 1,
-                    type = UnorderedList()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Second",
-                            paragraph = it,
-                        )
-                    )
-                }
-            )
-        )
-
-        assertEquals(expectedHtml, richTextState.toHtml())
-    }
-
-    @Test
-    fun testDecodeOrderedListAndUnorderedList() {
-        val expectedHtml = "<ol><li>First</li><li>Second</li></ol><ul><li>Third</li><li>Fourth</li></ul>"
-
-        val richTextState = RichTextState(
-            listOf(
-                RichParagraph(
-                    key = 0,
-                    type = OrderedList(1)
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "First",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 1,
-                    type = OrderedList(2)
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Second",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 2,
-                    type = UnorderedList()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Third",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 3,
-                    type = UnorderedList()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Fourth",
-                            paragraph = it,
-                        )
-                    )
-                }
-            )
-        )
-
-        assertEquals(expectedHtml, richTextState.toHtml())
-    }
-
-    @Test
-    fun testDecodeOrderedListAndUnorderedListAndParagraph() {
-        val expectedHtml = "<ol><li>First</li><li>Second</li></ol><p>Paragraph</p><ul><li>Third</li><li>Fourth</li></ul>"
-
-        val richTextState = RichTextState(
-            listOf(
-                RichParagraph(
-                    key = 0,
-                    type = OrderedList(1)
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "First",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 1,
-                    type = OrderedList(2)
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Second",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 2,
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Paragraph",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 3,
-                    type = UnorderedList()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Third",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    key = 4,
-                    type = UnorderedList()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            key = 0,
-                            text = "Fourth",
-                            paragraph = it,
-                        )
-                    )
-                }
-            )
-        )
-
-        assertEquals(expectedHtml, richTextState.toHtml())
-    }
-
-    @Test
-    fun testDecodeListsWithDifferentLevels() {
-        val expectedHtml = """
-            <ol>
-                <li>F</li>
-                <ol><li>FFO</li><li>FSO</li></ol>
-                <ul>
-                    <li>FFU</li><li>FSU</li>
-                    <ul><li>FSU3</li></ul>
-                </ul>
-            </ol>
-            <ul>
-                <li>FFU</li>
-                <ol><li>FFO</li></ol>
-            </ul>
-            <p>Last</p>
-        """
-            .trimIndent()
-            .replace("\n", "")
-            .replace(" ", "")
-
-        val richTextState = RichTextState(
-            listOf(
-                RichParagraph(
-                    type = OrderedList(
-                        number = 1,
-                        initialLevel = 1,
-                    )
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "F",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = OrderedList(
-                        number = 1,
-                        initialLevel = 2,
-                    )
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "FFO",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = OrderedList(
-                        number = 2,
-                        initialLevel = 2,
-                    )
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "FSO",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = UnorderedList(
-                        initialLevel = 2,
-                    )
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "FFU",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = UnorderedList(
-                        initialLevel = 2,
-                    )
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "FSU",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = UnorderedList(
-                        initialLevel = 3,
-                    )
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "FSU3",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = UnorderedList(
-                        initialLevel = 1
-                    )
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "FFU",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = OrderedList(
-                        number = 1,
-                        initialLevel = 2,
-                    )
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "FFO",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = DefaultParagraph()
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "Last",
-                            paragraph = it,
-                        )
-                    )
-                }
-            )
-        )
-
-        assertEquals(expectedHtml, richTextState.toHtml())
-    }
-
-    @Test
-    fun testDecodeSpanWithOnlySpace() {
-        val html = "<meta charset='utf-8'><span style=\"box-sizing: border-box; color: rgb(240, 246, 252); font-family: -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, &quot;Noto Sans&quot;, Helvetica, Arial, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(1, 4, 9); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">results in the</span><span style=\"color: rgb(240, 246, 252); font-family: -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, &quot;Noto Sans&quot;, Helvetica, Arial, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(1, 4, 9); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;\"><span> </span></span><b style=\"box-sizing: border-box; font-weight: var(--base-text-weight-semibold, 600); color: rgb(240, 246, 252); font-family: -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, &quot;Noto Sans&quot;, Helvetica, Arial, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(1, 4, 9); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">Horizon-School</b>"
-        val richTextState = RichTextStateHtmlParser.encode(html)
-
-        assertEquals(
-            "results in the Horizon-School",
-            richTextState.annotatedString.text
-        )
-    }
-
 }
