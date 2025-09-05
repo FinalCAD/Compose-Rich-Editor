@@ -1272,6 +1272,8 @@ public class RichTextState internal constructor(
                 1
 
         val newType = UnorderedList(
+            config = config,
+            initialLevel = listLevel,
         )
 
         val newTextFieldValue = adjustOrderedListsNumbers(
@@ -1338,6 +1340,8 @@ public class RichTextState internal constructor(
 
         val newType = OrderedList(
             number = orderedListNumber,
+            config = config,
+            initialLevel = listLevel,
         )
 
         val newTextFieldValue = adjustOrderedListsNumbers(
@@ -1649,14 +1653,14 @@ public class RichTextState internal constructor(
                     index += richParagraphStartTextLength
                     withStyle(RichSpanStyle.DefaultSpanStyle) {
                         index = append(
+                            state = this@RichTextState,
                             richSpanList = richParagraph.children,
                             startIndex = index,
                             text = newText,
                             selection = newTextFieldValue.selection,
-                            onStyledRichSpan = { richSpan ->
-                                newStyledRichSpanList.add(richSpan)
+                            onStyledRichSpan = {
+                                newStyledRichSpanList.add(it)
                             },
-                            richTextConfig = config,
                         )
 
                         if (!singleParagraphMode) {
@@ -2113,6 +2117,7 @@ public class RichTextState internal constructor(
 
         if (richSpan.text == "- " || richSpan.text == "* ") {
             richSpan.paragraph.type = UnorderedList(
+                config = config,
             )
             richSpan.text = ""
         } else if (richSpan.text.matches(Regex("^\\d+\\. "))) {
@@ -2121,6 +2126,7 @@ public class RichTextState internal constructor(
                 val number = richSpan.text.substring(0, dotIndex).toIntOrNull() ?: 1
                 richSpan.paragraph.type = OrderedList(
                     number = number,
+                    config = config,
                 )
                 richSpan.text = ""
             }
@@ -2186,6 +2192,9 @@ public class RichTextState internal constructor(
                 paragraph = currentParagraph,
                 newType = OrderedList(
                     number = currentNumber,
+                    config = config,
+                    startTextWidth = currentParagraphType.startTextWidth,
+                    initialLevel = currentParagraphType.level
                 ),
                 textFieldValue = newTextFieldValue,
             )
@@ -2237,6 +2246,9 @@ public class RichTextState internal constructor(
                     paragraph = currentParagraph,
                     newType = OrderedList(
                         number = number,
+                        config = config,
+                        startTextWidth = currentParagraphType.startTextWidth,
+                        initialLevel = currentParagraphType.level
                     ),
                     textFieldValue = tempTextFieldValue,
                 )
@@ -3936,12 +3948,12 @@ public class RichTextState internal constructor(
                     index += richParagraphStartTextLength
                     withStyle(RichSpanStyle.DefaultSpanStyle) {
                         index = append(
+                            state = this@RichTextState,
                             richSpanList = richParagraph.children,
                             startIndex = index,
                             onStyledRichSpan = {
                                 newStyledRichSpanList.add(it)
                             },
-                            richTextConfig = config,
                         )
 
                         if (!singleParagraphMode) {
@@ -4036,6 +4048,9 @@ public class RichTextState internal constructor(
                     paragraph = richParagraph,
                     newType = OrderedList(
                         number = orderedListNumber,
+                        config = config,
+                        startTextWidth = type.startTextWidth,
+                        initialLevel = type.level
                     ),
                     textFieldValue = tempTextFieldValue,
                 )

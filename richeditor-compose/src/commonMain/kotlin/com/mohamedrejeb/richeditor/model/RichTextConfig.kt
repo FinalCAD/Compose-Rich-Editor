@@ -125,6 +125,6 @@ internal val DefaultUnorderedListStyleType =
 internal val DefaultOrderedListStyleType: OrderedListStyleType =
     OrderedListStyleType.Multiple(
         OrderedListStyleType.Decimal,
-        OrderedListStyleType.LowerRoman,
-        OrderedListStyleType.LowerAlpha,
+        OrderedListStyleType.Decimal,
+        OrderedListStyleType.Decimal,
     )

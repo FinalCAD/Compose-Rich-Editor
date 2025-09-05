@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-version = "1.0.0-rc16-finalcad"
+version = "1.0.0-rc17-finalcad"
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)

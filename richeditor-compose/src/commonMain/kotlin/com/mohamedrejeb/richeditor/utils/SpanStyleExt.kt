@@ -16,6 +16,13 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.isUnspecified
 import com.mohamedrejeb.richeditor.model.RichSpan
+
+/**
+ * Merge two [SpanStyle]s together.
+ * It behaves like [SpanStyle.merge] but it also merges [TextDecoration]s.
+ * Which is not the case in [SpanStyle.merge].
+ * So if the two [SpanStyle]s have different [TextDecoration]s, they will be combined.
+ */
 internal fun SpanStyle.customMerge(
     other: SpanStyle?,
     textDecoration: TextDecoration? = null

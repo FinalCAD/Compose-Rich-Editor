@@ -136,6 +136,10 @@ internal object CssDecoder {
             cssStyleMap["text-indent"] = textIndent
         }
 
+        decodeTextUnitToCss(paragraphStyle.textIndent?.restLine)?.let { textIndent ->
+            cssStyleMap["text-indent"] = textIndent
+        }
+
         return cssStyleMap
     }
 
