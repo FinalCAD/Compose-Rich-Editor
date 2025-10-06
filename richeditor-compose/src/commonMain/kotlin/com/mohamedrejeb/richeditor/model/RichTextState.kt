@@ -38,6 +38,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.reflect.KClass
@@ -48,6 +49,47 @@ public fun rememberRichTextState(): RichTextState {
         RichTextState()
     }
 }
+
+public const val WEB_URL : String =
+    ("((?:(http|https|Http|Https|rtsp|Rtsp):\\/\\/(?:(?:[a-zA-Z0-9\\$\\-\\_\\.\\+\\!\\*\\'\\(\\)"
+            + "\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,64}(?:\\:(?:[a-zA-Z0-9\\$\\-\\_"
+            + "\\.\\+\\!\\*\\'\\(\\)\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,25})?\\@)?)?"
+            + "((?:(?:[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}\\.)+" // named host
+            + "(?:" // plus top level domain
+            + "(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])"
+            + "|(?:biz|b[abdefghijmnorstvwyz])"
+            + "|(?:cat|com|coop|c[acdfghiklmnoruvxyz])"
+            + "|d[ejkmoz]"
+            + "|(?:edu|e[cegrstu])"
+            + "|f[ijkmor]"
+            + "|(?:gov|g[abdefghilmnpqrstuwy])"
+            + "|h[kmnrtu]"
+            + "|(?:info|int|i[delmnoqrst])"
+            + "|(?:jobs|j[emop])"
+            + "|k[eghimnrwyz]"
+            + "|l[abcikrstuvy]"
+            + "|(?:mil|mobi|museum|m[acdghklmnopqrstuvwxyz])"
+            + "|(?:name|net|n[acefgilopruz])"
+            + "|(?:org|om)"
+            + "|(?:pro|p[aefghklmnrstwy])"
+            + "|qa"
+            + "|r[eouw]"
+            + "|s[abcdeghijklmnortuvyz]"
+            + "|(?:tel|travel|t[cdfghjklmnoprtvwz])"
+            + "|u[agkmsyz]"
+            + "|v[aceginu]"
+            + "|w[fs]"
+            + "|y[etu]"
+            + "|z[amw]))"
+            + "|(?:(?:25[0-5]|2[0-4]" // or ip address
+            + "[0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(?:25[0-5]|2[0-4][0-9]"
+            + "|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(?:25[0-5]|2[0-4][0-9]|[0-1]"
+            + "[0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}"
+            + "|[1-9][0-9]|[0-9])))"
+            + "(?:\\:\\d{1,5})?)" // plus option port number
+            + "(\\/(?:(?:[a-zA-Z0-9\\;\\/\\?\\:\\@\\&\\=\\#\\~" // plus option query params
+            + "\\-\\.\\+\\!\\*\\'\\(\\)\\,\\_])|(?:\\%[a-fA-F0-9]{2}))*)?"
+            + "(?:\\b|$)");
 
 @OptIn(ExperimentalRichTextApi::class)
 public class RichTextState internal constructor(
@@ -688,14 +730,23 @@ public class RichTextState internal constructor(
      */
     public fun updateLink(
         url: String,
+        force: Boolean = false
     ) {
-        if (!isLink) return
+        if (!isLink && !force) return
+
+        var richSpan : RichSpan?;
+        if (force) {
+            val localRichSpan = getRichSpanByTextIndex(selection.min - 1, force)
+            richSpan = getLinkRichSpan (localRichSpan)
+        } else {
+            richSpan = getSelectedLinkRichSpan(force) ?: return
+        }
+
+        richSpan ?: return
 
         val linkStyle = RichSpanStyle.Link(
             url = url,
         )
-
-        val richSpan = getSelectedLinkRichSpan() ?: return
 
         richSpan.richSpanStyle = linkStyle
 
@@ -705,10 +756,18 @@ public class RichTextState internal constructor(
     /**
      * Remove the link from the selected text.
      */
-    public fun removeLink() {
-        if (!isLink) return
+    public fun removeLink(force: Boolean = false) {
+        if (!isLink && !force) return
 
-        val richSpan = getSelectedLinkRichSpan() ?: return
+        var richSpan : RichSpan?;
+        if (force) {
+            val localRichSpan = getRichSpanByTextIndex(selection.min - 2, force)
+            richSpan = getLinkRichSpan (localRichSpan)
+        } else {
+            richSpan = getSelectedLinkRichSpan(force) ?: return
+        }
+
+        richSpan ?: return
 
         richSpan.richSpanStyle = RichSpanStyle.Default
 
@@ -1249,8 +1308,8 @@ public class RichTextState internal constructor(
                 ?: DefaultParagraph()
         }
 
-    private fun getSelectedLinkRichSpan(): RichSpan? {
-        val richSpan = getRichSpanByTextIndex(selection.min - 1)
+    private fun getSelectedLinkRichSpan(ignoreCustomFiltering: Boolean = false): RichSpan? {
+        val richSpan = getRichSpanByTextIndex(selection.min - 1, ignoreCustomFiltering)
 
         return getLinkRichSpan(richSpan)
     }
@@ -1555,11 +1614,20 @@ public class RichTextState internal constructor(
      */
     internal fun onTextFieldValueChange(newTextFieldValue: TextFieldValue) {
         tempTextFieldValue = newTextFieldValue
-
-        if (tempTextFieldValue.text.length > textFieldValue.text.length)
+        var shouldAddLink = false;
+        val startTypeIndex = textFieldValue.selection.min
+        val typedCharsCount = tempTextFieldValue.text.length - textFieldValue.text.length;
+        var activeRichSpan: RichSpan? = null
+        if (tempTextFieldValue.text.length > textFieldValue.text.length) {
             handleAddingCharacters()
-        else if (tempTextFieldValue.text.length < textFieldValue.text.length)
+            shouldAddLink = true
+        }
+        else if (tempTextFieldValue.text.length < textFieldValue.text.length) {
+            val previousIndex = max (0, startTypeIndex - 2)
+
+            activeRichSpan = getOrCreateRichSpanByTextIndex(previousIndex)
             handleRemovingCharacters()
+        }
         else if (
             tempTextFieldValue.text == textFieldValue.text &&
             tempTextFieldValue.selection != textFieldValue.selection
@@ -1573,6 +1641,28 @@ public class RichTextState internal constructor(
 
         // Update text field value
         updateTextFieldValue()
+        if (shouldAddLink) {
+
+            val fixedSize = startTypeIndex + typedCharsCount
+            if (fixedSize>textFieldValue.text.length) {
+                //should debug here
+                return;
+            }
+
+            val typedText = textFieldValue.text.substring(
+                startIndex = startTypeIndex,
+                endIndex = fixedSize,
+            )
+            val previousIndex = startTypeIndex - 1
+
+            val localActiveRichSpan = getOrCreateRichSpanByTextIndex(previousIndex, typedText != " ")
+
+            if (localActiveRichSpan != null) {
+                checkURLContent(richSpan = localActiveRichSpan)
+            }
+        } else if (activeRichSpan != null) {
+            checkURLContent(richSpan = activeRichSpan, true)
+        }
     }
 
     /**
@@ -1707,7 +1797,7 @@ public class RichTextState internal constructor(
         )
         val previousIndex = startTypeIndex - 1
 
-        val activeRichSpan = getOrCreateRichSpanByTextIndex(previousIndex)
+        val activeRichSpan = getOrCreateRichSpanByTextIndex(previousIndex, typedText != " ")
 
         if (activeRichSpan != null) {
             val isAndroidSuggestion =
@@ -2133,6 +2223,25 @@ public class RichTextState internal constructor(
         }
     }
 
+    private fun checkURLContent(richSpan: RichSpan, shouldRemove: Boolean = false) {
+        val foundURLs = Regex(WEB_URL).findAll(richSpan.text.lowercase())
+        val lastURL = foundURLs.lastOrNull()
+        if (lastURL != null) {
+            val startRange = richSpan.textRange.start + lastURL.range.start;
+            val endRange = richSpan.textRange.start + lastURL.range.endInclusive;
+            val urlValue = lastURL.value;
+
+            if(richSpan.richSpanStyle is RichSpanStyle.Link) {
+                updateLink(urlValue, true)
+            } else {
+                addLinkToTextRange(urlValue, TextRange(startRange, endRange + 1))
+            }
+        } else if (richSpan.richSpanStyle is RichSpanStyle.Link) {
+                removeLink(true)
+            } 
+    }
+
+
     /**
      * Checks the ordered lists numbers and adjusts them if needed.
      *
@@ -2271,7 +2380,7 @@ public class RichTextState internal constructor(
             if (index < textFieldValue.selection.min) break
 
             // Get the rich span style at the index to split it between two paragraphs
-            val richSpan = getRichSpanByTextIndex(index)
+            val richSpan = getRichSpanByTextIndex(index, true)
 
             // If there is no rich span style at the index, continue (this should not happen)
             if (richSpan == null) {
