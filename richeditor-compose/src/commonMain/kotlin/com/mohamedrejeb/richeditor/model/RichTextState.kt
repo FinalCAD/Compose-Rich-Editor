@@ -729,6 +729,7 @@ public class RichTextState internal constructor(
      */
     public fun updateLink(
         url: String,
+        title: String?,
         force: Boolean = false
     ) {
         if (!isLink && !force) return
@@ -746,6 +747,11 @@ public class RichTextState internal constructor(
         val linkStyle = RichSpanStyle.Link(
             url = url,
         )
+
+        if(!title.isNullOrEmpty()) {
+            richSpan.text = title
+            textFieldValue = TextFieldValue(title,TextRange(richSpan.textRange.start+title.length, richSpan.textRange.start+title.length))
+        }
 
         richSpan.richSpanStyle = linkStyle
 
@@ -1660,7 +1666,7 @@ public class RichTextState internal constructor(
                 checkURLContent(richSpan = localActiveRichSpan)
             }
         } else if (activeRichSpan != null) {
-            checkURLContent(richSpan = activeRichSpan, true)
+            checkURLContent(richSpan = activeRichSpan)
         }
     }
 
@@ -2222,7 +2228,7 @@ public class RichTextState internal constructor(
         }
     }
 
-    private fun checkURLContent(richSpan: RichSpan, shouldRemove: Boolean = false) {
+    private fun checkURLContent(richSpan: RichSpan) {
         val foundURLs = Regex(WEB_URL).findAll(richSpan.text.lowercase())
         val lastURL = foundURLs.lastOrNull()
         if (lastURL != null) {
@@ -2231,7 +2237,7 @@ public class RichTextState internal constructor(
             val urlValue = lastURL.value;
 
             if(richSpan.richSpanStyle is RichSpanStyle.Link) {
-                updateLink(urlValue, true)
+                updateLink(urlValue, null,true)
             } else {
                 addLinkToTextRange(urlValue, TextRange(startRange, endRange + 1))
             }
