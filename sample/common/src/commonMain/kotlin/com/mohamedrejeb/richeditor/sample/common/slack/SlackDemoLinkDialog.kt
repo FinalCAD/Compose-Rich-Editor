@@ -83,7 +83,7 @@ fun SlackDemoLinkDialog(
                 focusedBorderColor = Color.White,
                 unfocusedBorderColor = Color.White
             ),
-            enabled = state.selection.collapsed && !state.isLink,
+            enabled = true,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -176,6 +176,8 @@ fun SlackDemoLinkDialog(
                         state.isLink ->
                             state.updateLink(
                                 url = link,
+                                title = text,
+                                true
                             )
 
                         state.selection.collapsed ->

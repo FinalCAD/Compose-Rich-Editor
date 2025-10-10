@@ -729,7 +729,7 @@ public class RichTextState internal constructor(
      */
     public fun updateLink(
         url: String,
-        title: String?,
+        title: String? = null,
         force: Boolean = false
     ) {
         if (!isLink && !force) return
@@ -748,13 +748,20 @@ public class RichTextState internal constructor(
             url = url,
         )
 
-        if(!title.isNullOrEmpty()) {
-            richSpan.text = title
-            textFieldValue = TextFieldValue(title,TextRange(richSpan.textRange.start+title.length, richSpan.textRange.start+title.length))
-        }
-
         richSpan.richSpanStyle = linkStyle
+        title?.let {
+            richSpan.text = it
 
+            val beforeText = textFieldValue.text.substring(0, richSpan.textRange.min)
+            val afterText = textFieldValue.text.substring(richSpan.textRange.max)
+            val newText = "$beforeText${richSpan.text}$afterText"
+            updateTextFieldValue(
+                newTextFieldValue = textFieldValue.copy(
+                    text = newText,
+                    selection = TextRange(selection.min + richSpan.text.length),
+                )
+            )
+        }?:
         updateTextFieldValue(textFieldValue)
     }
 
