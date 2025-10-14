@@ -10,6 +10,30 @@ public final class com/mohamedrejeb/richeditor/model/DefaultImageLoader : com/mo
 	public fun load (Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)Lcom/mohamedrejeb/richeditor/model/ImageData;
 }
 
+public final class com/mohamedrejeb/richeditor/model/HeadingStyle : java/lang/Enum {
+	public static final field Companion Lcom/mohamedrejeb/richeditor/model/HeadingStyle$Companion;
+	public static final field H1 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H2 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H3 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H4 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H5 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H6 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field Normal Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getHtmlTag ()Ljava/lang/String;
+	public final fun getMarkdownElement ()Ljava/lang/String;
+	public final fun getParagraphStyle ()Landroidx/compose/ui/text/ParagraphStyle;
+	public final fun getSpanStyle ()Landroidx/compose/ui/text/SpanStyle;
+	public final fun getTextStyle ()Landroidx/compose/ui/text/TextStyle;
+	public static fun valueOf (Ljava/lang/String;)Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static fun values ()[Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+}
+
+public final class com/mohamedrejeb/richeditor/model/HeadingStyle$Companion {
+	public final fun fromParagraphStyle (Landroidx/compose/ui/text/ParagraphStyle;)Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public final fun fromSpanStyle (Landroidx/compose/ui/text/SpanStyle;)Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+}
+
 public final class com/mohamedrejeb/richeditor/model/ImageData {
 	public static final field $stable I
 	public fun <init> (Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;Landroidx/compose/ui/Modifier;)V
@@ -57,11 +81,8 @@ public final class com/mohamedrejeb/richeditor/model/RichSpanStyle$Default : com
 	public static final field INSTANCE Lcom/mohamedrejeb/richeditor/model/RichSpanStyle$Default;
 	public fun appendCustomContent (Landroidx/compose/ui/text/AnnotatedString$Builder;Lcom/mohamedrejeb/richeditor/model/RichTextState;)Landroidx/compose/ui/text/AnnotatedString$Builder;
 	public fun drawCustomStyle-zdrCDHg (Landroidx/compose/ui/graphics/drawscope/DrawScope;Landroidx/compose/ui/text/TextLayoutResult;JLcom/mohamedrejeb/richeditor/model/RichTextConfig;FF)V
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getAcceptNewTextInTheEdges ()Z
 	public fun getSpanStyle ()Lkotlin/jvm/functions/Function1;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/mohamedrejeb/richeditor/model/RichSpanStyle$DefaultImpls {
@@ -155,6 +176,7 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState {
 	public final fun getCanIncreaseListLevel ()Z
 	public final fun getComposition-MzsxiRA ()Landroidx/compose/ui/text/TextRange;
 	public final fun getConfig ()Lcom/mohamedrejeb/richeditor/model/RichTextConfig;
+	public final fun getCurrentHeadingStyle ()Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
 	public final fun getCurrentParagraphStyle ()Landroidx/compose/ui/text/ParagraphStyle;
 	public final fun getCurrentRichSpanStyle ()Lcom/mohamedrejeb/richeditor/model/RichSpanStyle;
 	public final fun getCurrentSpanStyle ()Landroidx/compose/ui/text/SpanStyle;
@@ -179,7 +201,8 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState {
 	public final fun isUnorderedList ()Z
 	public final fun removeCode ()V
 	public final fun removeCodeSpan ()V
-	public final fun removeLink ()V
+	public final fun removeLink (Z)V
+	public static synthetic fun removeLink$default (Lcom/mohamedrejeb/richeditor/model/RichTextState;ZILjava/lang/Object;)V
 	public final fun removeOrderedList ()V
 	public final fun removeParagraphStyle (Landroidx/compose/ui/text/ParagraphStyle;)V
 	public final fun removeRichSpan (Lcom/mohamedrejeb/richeditor/model/RichSpanStyle;)V
@@ -193,6 +216,7 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState {
 	public final fun replaceTextRange-72CqOWE (JLjava/lang/String;)V
 	public final fun setConfig-kmsmbh4 (JLandroidx/compose/ui/text/style/TextDecoration;JJJI)V
 	public static synthetic fun setConfig-kmsmbh4$default (Lcom/mohamedrejeb/richeditor/model/RichTextState;JLandroidx/compose/ui/text/style/TextDecoration;JJJIILjava/lang/Object;)V
+	public final fun setHeadingStyle (Lcom/mohamedrejeb/richeditor/model/HeadingStyle;)V
 	public final fun setHtml (Ljava/lang/String;)Lcom/mohamedrejeb/richeditor/model/RichTextState;
 	public final fun setMarkdown (Ljava/lang/String;)Lcom/mohamedrejeb/richeditor/model/RichTextState;
 	public final fun setSelection-5zc-tL8 (J)V
@@ -209,6 +233,8 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState {
 	public final fun toggleSpanStyle (Landroidx/compose/ui/text/SpanStyle;)V
 	public final fun toggleUnorderedList ()V
 	public final fun updateLink (Ljava/lang/String;)V
+	public final fun updateLink (Ljava/lang/String;Ljava/lang/String;Z)V
+	public static synthetic fun updateLink$default (Lcom/mohamedrejeb/richeditor/model/RichTextState;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)V
 }
 
 public final class com/mohamedrejeb/richeditor/model/RichTextState$Companion {
@@ -216,6 +242,7 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState$Companion {
 }
 
 public final class com/mohamedrejeb/richeditor/model/RichTextStateKt {
+	public static final field WEB_URL Ljava/lang/String;
 	public static final fun rememberRichTextState (Landroidx/compose/runtime/Composer;I)Lcom/mohamedrejeb/richeditor/model/RichTextState;
 }
 
@@ -232,6 +259,10 @@ public final class com/mohamedrejeb/richeditor/model/TextPaddingValues {
 	public final fun getVertical-XSAIIZE ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/mohamedrejeb/richeditor/paragraph/type/ListLevel {
+	public abstract fun getLevel ()I
 }
 
 public abstract interface class com/mohamedrejeb/richeditor/paragraph/type/OrderedListStyleType {
@@ -346,6 +377,62 @@ public final class com/mohamedrejeb/richeditor/ui/material/RichTextKt {
 	public static final fun RichText-a0LXGaU (Lcom/mohamedrejeb/richeditor/model/RichTextState;Landroidx/compose/ui/Modifier;JJLandroidx/compose/ui/text/font/FontStyle;Landroidx/compose/ui/text/font/FontWeight;Landroidx/compose/ui/text/font/FontFamily;JLandroidx/compose/ui/text/style/TextDecoration;IJIZIILjava/util/Map;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/text/TextStyle;Lcom/mohamedrejeb/richeditor/model/ImageLoader;Landroidx/compose/runtime/Composer;III)V
 }
 
+public final class com/mohamedrejeb/richeditor/ui/material3/ComposableSingletons$RichTextEditorPreviewKt {
+	public static final field INSTANCE Lcom/mohamedrejeb/richeditor/ui/material3/ComposableSingletons$RichTextEditorPreviewKt;
+	public fun <init> ()V
+	public final fun getLambda$-1009397696$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1042496810$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1239301511$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1286258756$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1333447262$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1376830123$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1557886832$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1589268843$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1700879689$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1818333604$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1881936398$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1913318409$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-2035213002$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-2060030917$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-24850355$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-251805350$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-335602739$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-348899921$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-435736529$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-659652305$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-718447244$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-759786095$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-915251945$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-962209190$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1021030196$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1064883129$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1165029498$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1345079762$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1387372573$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1388932695$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1464600627$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1553142670$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1567422837$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1569967987$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$162112238$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1711422139$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1723266008$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1751541753$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1788650193$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1877192236$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1891472403$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1894017553$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1935704728$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$2047315574$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$294587291$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$485735663$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$486161804$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$618636857$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$72244216$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$809785229$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$840979932$richeditor_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class com/mohamedrejeb/richeditor/ui/material3/OutlinedRichTextEditorKt {
 	public static final fun OutlinedRichTextEditor (Lcom/mohamedrejeb/richeditor/model/RichTextState;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIIILkotlin/jvm/functions/Function1;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Lcom/mohamedrejeb/richeditor/ui/material3/RichTextEditorColors;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;IIII)V
 }
@@ -383,6 +470,18 @@ public final class com/mohamedrejeb/richeditor/ui/material3/RichTextEditorDefaul
 
 public final class com/mohamedrejeb/richeditor/ui/material3/RichTextEditorKt {
 	public static final fun RichTextEditor (Lcom/mohamedrejeb/richeditor/model/RichTextState;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/foundation/text/KeyboardActions;ZIIILkotlin/jvm/functions/Function1;Landroidx/compose/foundation/interaction/MutableInteractionSource;Landroidx/compose/ui/graphics/Shape;Lcom/mohamedrejeb/richeditor/ui/material3/RichTextEditorColors;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;IIII)V
+}
+
+public final class com/mohamedrejeb/richeditor/ui/material3/RichTextEditorPreviewKt {
+	public static final fun RichTextEditorDisabledExample (Landroidx/compose/runtime/Composer;I)V
+	public static final fun RichTextEditorErrorExample (Landroidx/compose/runtime/Composer;I)V
+	public static final fun RichTextEditorMarkdownExample (Landroidx/compose/runtime/Composer;I)V
+	public static final fun RichTextEditorReadOnlyExample (Landroidx/compose/runtime/Composer;I)V
+	public static final fun RichTextEditorSimpleExample (Landroidx/compose/runtime/Composer;I)V
+	public static final fun RichTextEditorVariationsExample (Landroidx/compose/runtime/Composer;I)V
+	public static final fun RichTextEditorWithContentExample (Landroidx/compose/runtime/Composer;I)V
+	public static final fun RichTextEditorWithIconsExample (Landroidx/compose/runtime/Composer;I)V
+	public static final fun RichTextEditorWithLabelExample (Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class com/mohamedrejeb/richeditor/ui/material3/RichTextKt {
