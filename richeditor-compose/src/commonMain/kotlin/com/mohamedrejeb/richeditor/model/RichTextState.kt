@@ -727,6 +727,15 @@ public class RichTextState internal constructor(
      *
      * @param url the new URL of the link.
      */
+    public fun updateLink(url: String): Unit = updateLink(url, null, false)
+
+    /**
+     * Update the link of the selected text.
+     *
+     * @param url the new URL of the link.
+     * @param title the optional title of the link.
+     * @param force whether to force the update even if not currently on a link.
+     */
     public fun updateLink(
         url: String,
         title: String? = null,
