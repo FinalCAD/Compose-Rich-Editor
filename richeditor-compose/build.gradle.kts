@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+version = "1.0.0-rc17-finalcad"
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.compose.compiler)
@@ -69,6 +71,12 @@ kotlin {
         implementation(compose.desktop.uiTestJUnit4)
         implementation(compose.desktop.currentOs)
     }
+
+    // Add Android-specific dependencies for previews
+    sourceSets.named("androidMain").dependencies {
+        implementation(compose.preview)
+        implementation(compose.uiTooling)
+    }
 }
 
 android {
@@ -83,6 +91,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        compose = true
     }
 }
 

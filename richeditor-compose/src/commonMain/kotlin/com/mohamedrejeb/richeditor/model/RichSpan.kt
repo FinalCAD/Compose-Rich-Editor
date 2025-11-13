@@ -9,12 +9,13 @@ import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
 import com.mohamedrejeb.richeditor.paragraph.RichParagraph
 import com.mohamedrejeb.richeditor.utils.customMerge
 import com.mohamedrejeb.richeditor.utils.isSpecifiedFieldsEquals
-import kotlin.collections.indices
 
 /**
  * A rich span is a part of a rich paragraph.
  */
-@OptIn(ExperimentalRichTextApi::class)
+/**
+ * A rich span is a part of a rich paragraph.
+ */
 internal class RichSpan(
     internal val key: Int? = null,
     val children: MutableList<RichSpan> = mutableListOf(),
@@ -484,7 +485,7 @@ internal class RichSpan(
             val startSecondHalf = (removeTextRange.max - this.textRange.min) until (this.textRange.max - this.textRange.min)
             val newStartText =
                 (if (startFirstHalf.isEmpty()) "" else text.substring(startFirstHalf)) +
-                (if (startSecondHalf.isEmpty()) "" else text.substring(startSecondHalf))
+                        (if (startSecondHalf.isEmpty()) "" else text.substring(startSecondHalf))
 
             this.textRange = TextRange(start = this.textRange.min, end = this.textRange.min + newStartText.length)
             text = newStartText

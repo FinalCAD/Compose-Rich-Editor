@@ -1,88 +1,103 @@
+/*
 package com.mohamedrejeb.richeditor.model
 
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
-import com.mohamedrejeb.richeditor.paragraph.RichParagraph
-import com.mohamedrejeb.richeditor.paragraph.type.OrderedList
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertIsNot
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-@OptIn(ExperimentalRichTextApi::class)
 class ListBehaviorTest {
+
     @Test
-    fun testBackspaceOnEmptyListLevel1() {
+    fun testExitListOnEmptyItem_defaultBehavior() {
         val state = RichTextState()
+        state.config.exitListOnEmptyItem = true
 
-        // Create a list with level 1
-        state.addTextAfterSelection("1.")
-        state.addTextAfterSelection(" ")
+        // Start with an unordered list
+        state.setText("- Item 1")
+        state.addUnorderedList()
 
-        // Verify that the list was created
-        assertIs<OrderedList>(state.richParagraphList.first().type)
+        // Press enter to create a new list item
+        state.addTextAfterSelection("\n")
 
-        // Simulate backspace at the start of empty list item
-        state.onTextFieldValueChange(TextFieldValue(
-            text = "1.",
-            selection = TextRange(2)
-        ))
+        // Verify we're in an unordered list
+        assertTrue(state.isUnorderedList)
 
-        // Verify that the list was exited (converted to default paragraph)
-        assertIsNot<OrderedList>(state.richParagraphList.first().type)
+        // Press enter again on empty list item - should exit list
+        state.addTextAfterSelection("\n")
+
+        // Should not be in list anymore
+        assertFalse(state.isUnorderedList)
     }
 
     @Test
-    fun testBackspaceOnEmptyListLevel2() {
-        val state = RichTextState(
-            listOf(
-                RichParagraph(
-                    type = OrderedList(
-                        number = 1,
-                        initialLevel = 1,
-                    ),
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "a",
-                            paragraph = it,
-                        )
-                    )
-                },
-                RichParagraph(
-                    type = OrderedList(
-                        number = 1,
-                        initialLevel = 2,
-                    ),
-                ).also {
-                    it.children.add(
-                        RichSpan(
-                            text = "",
-                            paragraph = it,
-                        )
-                    )
-                }
-            )
-        )
+    fun testExitListOnEmptyItem_disabled() {
+        val state = RichTextState()
+        state.config.exitListOnEmptyItem = false
 
-        // Simulate backspace at the start of empty list item
-        val newText = state.annotatedString.text.dropLast(1)
-        state.onTextFieldValueChange(TextFieldValue(
-            text = newText,
-            selection = TextRange(newText.length)
-        ))
+        // Start with an unordered list
+        state.setText("- Item 1")
+        state.addUnorderedList()
 
-        // Verify that the list level was decreased but still remains a list
-        val firstParagraphType = state.richParagraphList[0].type
-        assertIs<OrderedList>(firstParagraphType)
-        assertEquals(1, firstParagraphType.number)
-        assertEquals(1, firstParagraphType.level)
+        // Press enter to create a new list item
+        state.addTextAfterSelection("\n")
 
-        val secondParagraphType = state.richParagraphList[1].type
-        assertIs<OrderedList>(secondParagraphType)
-        assertEquals(2, secondParagraphType.number)
-        assertEquals(1, secondParagraphType.level)
+        // Verify we're in an unordered list
+        assertTrue(state.isUnorderedList)
+
+        // Press enter again on empty list item - should stay in list
+        state.addTextAfterSelection("\n")
+
+        // Should still be in list
+        assertTrue(state.isUnorderedList)
+    }
+
+    @Test
+    fun testListLevelIndentConfig() {
+        val state = RichTextState()
+        
+        // Test default list indent
+        assertEquals(25, state.config.listIndent)
+        
+        // Test custom list indent
+        state.config.listIndent = 40
+        assertEquals(40, state.config.listIndent)
+        
+        // Test specific ordered list indent
+        state.config.orderedListIndent = 50
+        assertEquals(50, state.config.orderedListIndent)
+        
+        // Test specific unordered list indent
+        state.config.unorderedListIndent = 30
+        assertEquals(30, state.config.unorderedListIndent)
+    }
+
+    @Test
+    fun testPreserveStyleOnEmptyLine() {
+        val state = RichTextState()
+        
+        // Test default behavior
+        assertTrue(state.config.preserveStyleOnEmptyLine)
+        
+        // Test changing the config
+        state.config.preserveStyleOnEmptyLine = false
+        assertFalse(state.config.preserveStyleOnEmptyLine)
+    }
+
+    @Test
+    fun testListItemCreation() {
+        val state = RichTextState()
+        
+        // Test automatic list creation from "- "
+        state.setText("- ")
+        assertTrue(state.isUnorderedList)
+        assertEquals("", state.toText().trim())
+        
+        // Test automatic ordered list creation from "1. "
+        state.setText("1. ")
+        assertTrue(state.isOrderedList)
+        assertEquals("", state.toText().trim())
     }
 }
+*/

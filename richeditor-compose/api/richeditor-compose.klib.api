@@ -5,13 +5,41 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <com.mohamedrejeb.richeditor:richeditor-compose>
+// Library unique name: <com.finalcad.richeditor:richeditor-compose>
 open annotation class com.mohamedrejeb.richeditor.annotation/ExperimentalRichTextApi : kotlin/Annotation { // com.mohamedrejeb.richeditor.annotation/ExperimentalRichTextApi|null[0]
     constructor <init>() // com.mohamedrejeb.richeditor.annotation/ExperimentalRichTextApi.<init>|<init>(){}[0]
 }
 
 open annotation class com.mohamedrejeb.richeditor.annotation/InternalRichTextApi : kotlin/Annotation { // com.mohamedrejeb.richeditor.annotation/InternalRichTextApi|null[0]
     constructor <init>() // com.mohamedrejeb.richeditor.annotation/InternalRichTextApi.<init>|<init>(){}[0]
+}
+
+final enum class com.mohamedrejeb.richeditor.model/HeadingStyle : kotlin/Enum<com.mohamedrejeb.richeditor.model/HeadingStyle> { // com.mohamedrejeb.richeditor.model/HeadingStyle|null[0]
+    enum entry H1 // com.mohamedrejeb.richeditor.model/HeadingStyle.H1|null[0]
+    enum entry H2 // com.mohamedrejeb.richeditor.model/HeadingStyle.H2|null[0]
+    enum entry H3 // com.mohamedrejeb.richeditor.model/HeadingStyle.H3|null[0]
+    enum entry H4 // com.mohamedrejeb.richeditor.model/HeadingStyle.H4|null[0]
+    enum entry H5 // com.mohamedrejeb.richeditor.model/HeadingStyle.H5|null[0]
+    enum entry H6 // com.mohamedrejeb.richeditor.model/HeadingStyle.H6|null[0]
+    enum entry Normal // com.mohamedrejeb.richeditor.model/HeadingStyle.Normal|null[0]
+
+    final val entries // com.mohamedrejeb.richeditor.model/HeadingStyle.entries|#static{}entries[0]
+        final fun <get-entries>(): kotlin.enums/EnumEntries<com.mohamedrejeb.richeditor.model/HeadingStyle> // com.mohamedrejeb.richeditor.model/HeadingStyle.entries.<get-entries>|<get-entries>#static(){}[0]
+    final val htmlTag // com.mohamedrejeb.richeditor.model/HeadingStyle.htmlTag|{}htmlTag[0]
+        final fun <get-htmlTag>(): kotlin/String? // com.mohamedrejeb.richeditor.model/HeadingStyle.htmlTag.<get-htmlTag>|<get-htmlTag>(){}[0]
+    final val markdownElement // com.mohamedrejeb.richeditor.model/HeadingStyle.markdownElement|{}markdownElement[0]
+        final fun <get-markdownElement>(): kotlin/String // com.mohamedrejeb.richeditor.model/HeadingStyle.markdownElement.<get-markdownElement>|<get-markdownElement>(){}[0]
+
+    final fun getParagraphStyle(): androidx.compose.ui.text/ParagraphStyle // com.mohamedrejeb.richeditor.model/HeadingStyle.getParagraphStyle|getParagraphStyle(){}[0]
+    final fun getSpanStyle(): androidx.compose.ui.text/SpanStyle // com.mohamedrejeb.richeditor.model/HeadingStyle.getSpanStyle|getSpanStyle(){}[0]
+    final fun getTextStyle(): androidx.compose.ui.text/TextStyle // com.mohamedrejeb.richeditor.model/HeadingStyle.getTextStyle|getTextStyle(){}[0]
+    final fun valueOf(kotlin/String): com.mohamedrejeb.richeditor.model/HeadingStyle // com.mohamedrejeb.richeditor.model/HeadingStyle.valueOf|valueOf#static(kotlin.String){}[0]
+    final fun values(): kotlin/Array<com.mohamedrejeb.richeditor.model/HeadingStyle> // com.mohamedrejeb.richeditor.model/HeadingStyle.values|values#static(){}[0]
+
+    final object Companion { // com.mohamedrejeb.richeditor.model/HeadingStyle.Companion|null[0]
+        final fun fromParagraphStyle(androidx.compose.ui.text/ParagraphStyle): com.mohamedrejeb.richeditor.model/HeadingStyle // com.mohamedrejeb.richeditor.model/HeadingStyle.Companion.fromParagraphStyle|fromParagraphStyle(androidx.compose.ui.text.ParagraphStyle){}[0]
+        final fun fromSpanStyle(androidx.compose.ui.text/SpanStyle): com.mohamedrejeb.richeditor.model/HeadingStyle // com.mohamedrejeb.richeditor.model/HeadingStyle.Companion.fromSpanStyle|fromSpanStyle(androidx.compose.ui.text.SpanStyle){}[0]
+    }
 }
 
 abstract interface com.mohamedrejeb.richeditor.model/ImageLoader { // com.mohamedrejeb.richeditor.model/ImageLoader|null[0]
@@ -87,10 +115,12 @@ abstract interface com.mohamedrejeb.richeditor.model/RichSpanStyle { // com.moha
             final fun <get-spanStyle>(): kotlin/Function1<com.mohamedrejeb.richeditor.model/RichTextConfig, androidx.compose.ui.text/SpanStyle> // com.mohamedrejeb.richeditor.model/RichSpanStyle.Default.spanStyle.<get-spanStyle>|<get-spanStyle>(){}[0]
 
         final fun (androidx.compose.ui.graphics.drawscope/DrawScope).drawCustomStyle(androidx.compose.ui.text/TextLayoutResult, androidx.compose.ui.text/TextRange, com.mohamedrejeb.richeditor.model/RichTextConfig, kotlin/Float, kotlin/Float) // com.mohamedrejeb.richeditor.model/RichSpanStyle.Default.drawCustomStyle|drawCustomStyle@androidx.compose.ui.graphics.drawscope.DrawScope(androidx.compose.ui.text.TextLayoutResult;androidx.compose.ui.text.TextRange;com.mohamedrejeb.richeditor.model.RichTextConfig;kotlin.Float;kotlin.Float){}[0]
-        final fun equals(kotlin/Any?): kotlin/Boolean // com.mohamedrejeb.richeditor.model/RichSpanStyle.Default.equals|equals(kotlin.Any?){}[0]
-        final fun hashCode(): kotlin/Int // com.mohamedrejeb.richeditor.model/RichSpanStyle.Default.hashCode|hashCode(){}[0]
-        final fun toString(): kotlin/String // com.mohamedrejeb.richeditor.model/RichSpanStyle.Default.toString|toString(){}[0]
     }
+}
+
+abstract interface com.mohamedrejeb.richeditor.paragraph.type/ListLevel { // com.mohamedrejeb.richeditor.paragraph.type/ListLevel|null[0]
+    abstract val level // com.mohamedrejeb.richeditor.paragraph.type/ListLevel.level|{}level[0]
+        abstract fun <get-level>(): kotlin/Int // com.mohamedrejeb.richeditor.paragraph.type/ListLevel.level.<get-level>|<get-level>(){}[0]
 }
 
 abstract interface com.mohamedrejeb.richeditor.paragraph.type/OrderedListStyleType { // com.mohamedrejeb.richeditor.paragraph.type/OrderedListStyleType|null[0]
@@ -197,6 +227,8 @@ final class com.mohamedrejeb.richeditor.model/RichTextState { // com.mohamedreje
         final fun <get-composition>(): androidx.compose.ui.text/TextRange? // com.mohamedrejeb.richeditor.model/RichTextState.composition.<get-composition>|<get-composition>(){}[0]
     final val config // com.mohamedrejeb.richeditor.model/RichTextState.config|{}config[0]
         final fun <get-config>(): com.mohamedrejeb.richeditor.model/RichTextConfig // com.mohamedrejeb.richeditor.model/RichTextState.config.<get-config>|<get-config>(){}[0]
+    final val currentHeadingStyle // com.mohamedrejeb.richeditor.model/RichTextState.currentHeadingStyle|{}currentHeadingStyle[0]
+        final fun <get-currentHeadingStyle>(): com.mohamedrejeb.richeditor.model/HeadingStyle // com.mohamedrejeb.richeditor.model/RichTextState.currentHeadingStyle.<get-currentHeadingStyle>|<get-currentHeadingStyle>(){}[0]
     final val currentParagraphStyle // com.mohamedrejeb.richeditor.model/RichTextState.currentParagraphStyle|{}currentParagraphStyle[0]
         final fun <get-currentParagraphStyle>(): androidx.compose.ui.text/ParagraphStyle // com.mohamedrejeb.richeditor.model/RichTextState.currentParagraphStyle.<get-currentParagraphStyle>|<get-currentParagraphStyle>(){}[0]
     final val currentRichSpanStyle // com.mohamedrejeb.richeditor.model/RichTextState.currentRichSpanStyle|{}currentRichSpanStyle[0]
@@ -263,7 +295,7 @@ final class com.mohamedrejeb.richeditor.model/RichTextState { // com.mohamedreje
     final fun isRichSpan(kotlin.reflect/KClass<out com.mohamedrejeb.richeditor.model/RichSpanStyle>): kotlin/Boolean // com.mohamedrejeb.richeditor.model/RichTextState.isRichSpan|isRichSpan(kotlin.reflect.KClass<out|com.mohamedrejeb.richeditor.model.RichSpanStyle>){}[0]
     final fun removeCode() // com.mohamedrejeb.richeditor.model/RichTextState.removeCode|removeCode(){}[0]
     final fun removeCodeSpan() // com.mohamedrejeb.richeditor.model/RichTextState.removeCodeSpan|removeCodeSpan(){}[0]
-    final fun removeLink() // com.mohamedrejeb.richeditor.model/RichTextState.removeLink|removeLink(){}[0]
+    final fun removeLink(kotlin/Boolean = ...) // com.mohamedrejeb.richeditor.model/RichTextState.removeLink|removeLink(kotlin.Boolean){}[0]
     final fun removeOrderedList() // com.mohamedrejeb.richeditor.model/RichTextState.removeOrderedList|removeOrderedList(){}[0]
     final fun removeParagraphStyle(androidx.compose.ui.text/ParagraphStyle) // com.mohamedrejeb.richeditor.model/RichTextState.removeParagraphStyle|removeParagraphStyle(androidx.compose.ui.text.ParagraphStyle){}[0]
     final fun removeRichSpan(com.mohamedrejeb.richeditor.model/RichSpanStyle) // com.mohamedrejeb.richeditor.model/RichTextState.removeRichSpan|removeRichSpan(com.mohamedrejeb.richeditor.model.RichSpanStyle){}[0]
@@ -276,6 +308,7 @@ final class com.mohamedrejeb.richeditor.model/RichTextState { // com.mohamedreje
     final fun replaceSelectedText(kotlin/String) // com.mohamedrejeb.richeditor.model/RichTextState.replaceSelectedText|replaceSelectedText(kotlin.String){}[0]
     final fun replaceTextRange(androidx.compose.ui.text/TextRange, kotlin/String) // com.mohamedrejeb.richeditor.model/RichTextState.replaceTextRange|replaceTextRange(androidx.compose.ui.text.TextRange;kotlin.String){}[0]
     final fun setConfig(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.text.style/TextDecoration? = ..., androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.graphics/Color = ..., kotlin/Int = ...) // com.mohamedrejeb.richeditor.model/RichTextState.setConfig|setConfig(androidx.compose.ui.graphics.Color;androidx.compose.ui.text.style.TextDecoration?;androidx.compose.ui.graphics.Color;androidx.compose.ui.graphics.Color;androidx.compose.ui.graphics.Color;kotlin.Int){}[0]
+    final fun setHeadingStyle(com.mohamedrejeb.richeditor.model/HeadingStyle) // com.mohamedrejeb.richeditor.model/RichTextState.setHeadingStyle|setHeadingStyle(com.mohamedrejeb.richeditor.model.HeadingStyle){}[0]
     final fun setHtml(kotlin/String): com.mohamedrejeb.richeditor.model/RichTextState // com.mohamedrejeb.richeditor.model/RichTextState.setHtml|setHtml(kotlin.String){}[0]
     final fun setMarkdown(kotlin/String): com.mohamedrejeb.richeditor.model/RichTextState // com.mohamedrejeb.richeditor.model/RichTextState.setMarkdown|setMarkdown(kotlin.String){}[0]
     final fun setText(kotlin/String, androidx.compose.ui.text/TextRange = ...): com.mohamedrejeb.richeditor.model/RichTextState // com.mohamedrejeb.richeditor.model/RichTextState.setText|setText(kotlin.String;androidx.compose.ui.text.TextRange){}[0]
@@ -290,6 +323,7 @@ final class com.mohamedrejeb.richeditor.model/RichTextState { // com.mohamedreje
     final fun toggleSpanStyle(androidx.compose.ui.text/SpanStyle) // com.mohamedrejeb.richeditor.model/RichTextState.toggleSpanStyle|toggleSpanStyle(androidx.compose.ui.text.SpanStyle){}[0]
     final fun toggleUnorderedList() // com.mohamedrejeb.richeditor.model/RichTextState.toggleUnorderedList|toggleUnorderedList(){}[0]
     final fun updateLink(kotlin/String) // com.mohamedrejeb.richeditor.model/RichTextState.updateLink|updateLink(kotlin.String){}[0]
+    final fun updateLink(kotlin/String, kotlin/String? = ..., kotlin/Boolean = ...) // com.mohamedrejeb.richeditor.model/RichTextState.updateLink|updateLink(kotlin.String;kotlin.String?;kotlin.Boolean){}[0]
     final inline fun <#A1: reified com.mohamedrejeb.richeditor.model/RichSpanStyle> isRichSpan(): kotlin/Boolean // com.mohamedrejeb.richeditor.model/RichTextState.isRichSpan|isRichSpan(){0§<com.mohamedrejeb.richeditor.model.RichSpanStyle>}[0]
 
     final object Companion { // com.mohamedrejeb.richeditor.model/RichTextState.Companion|null[0]
@@ -367,6 +401,9 @@ final object com.mohamedrejeb.richeditor.ui.material3/RichTextEditorDefaults { /
     final fun richTextEditorWithoutLabelPadding(androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ..., androidx.compose.ui.unit/Dp = ...): androidx.compose.foundation.layout/PaddingValues // com.mohamedrejeb.richeditor.ui.material3/RichTextEditorDefaults.richTextEditorWithoutLabelPadding|richTextEditorWithoutLabelPadding(androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp){}[0]
 }
 
+final const val com.mohamedrejeb.richeditor.model/WEB_URL // com.mohamedrejeb.richeditor.model/WEB_URL|{}WEB_URL[0]
+    final fun <get-WEB_URL>(): kotlin/String // com.mohamedrejeb.richeditor.model/WEB_URL.<get-WEB_URL>|<get-WEB_URL>(){}[0]
+
 final val com.mohamedrejeb.richeditor.model/LocalImageLoader // com.mohamedrejeb.richeditor.model/LocalImageLoader|{}LocalImageLoader[0]
     final fun <get-LocalImageLoader>(): androidx.compose.runtime/ProvidableCompositionLocal<com.mohamedrejeb.richeditor.model/ImageLoader> // com.mohamedrejeb.richeditor.model/LocalImageLoader.<get-LocalImageLoader>|<get-LocalImageLoader>(){}[0]
 final val com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_DefaultImageLoader$stableprop // com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_DefaultImageLoader$stableprop|#static{}com_mohamedrejeb_richeditor_model_DefaultImageLoader$stableprop[0]
@@ -380,6 +417,7 @@ final val com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_Ri
 final val com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_RichTextState$stableprop // com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_RichTextState$stableprop|#static{}com_mohamedrejeb_richeditor_model_RichTextState$stableprop[0]
 final val com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_TextPaddingValues$stableprop // com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_TextPaddingValues$stableprop|#static{}com_mohamedrejeb_richeditor_model_TextPaddingValues$stableprop[0]
 final val com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_DefaultParagraph$stableprop // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_DefaultParagraph$stableprop|#static{}com_mohamedrejeb_richeditor_paragraph_type_DefaultParagraph$stableprop[0]
+final val com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OneSpaceParagraph$stableprop // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OneSpaceParagraph$stableprop|#static{}com_mohamedrejeb_richeditor_paragraph_type_OneSpaceParagraph$stableprop[0]
 final val com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedList$stableprop // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedList$stableprop|#static{}com_mohamedrejeb_richeditor_paragraph_type_OrderedList$stableprop[0]
 final val com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_Arabic$stableprop // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_Arabic$stableprop|#static{}com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_Arabic$stableprop[0]
 final val com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_ArabicIndic$stableprop // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_ArabicIndic$stableprop|#static{}com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_ArabicIndic$stableprop[0]
@@ -418,6 +456,7 @@ final fun com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_Ri
 final fun com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_TextPaddingValues$stableprop_getter(): kotlin/Int // com.mohamedrejeb.richeditor.model/com_mohamedrejeb_richeditor_model_TextPaddingValues$stableprop_getter|com_mohamedrejeb_richeditor_model_TextPaddingValues$stableprop_getter(){}[0]
 final fun com.mohamedrejeb.richeditor.model/rememberRichTextState(androidx.compose.runtime/Composer?, kotlin/Int): com.mohamedrejeb.richeditor.model/RichTextState // com.mohamedrejeb.richeditor.model/rememberRichTextState|rememberRichTextState(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 final fun com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_DefaultParagraph$stableprop_getter(): kotlin/Int // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_DefaultParagraph$stableprop_getter|com_mohamedrejeb_richeditor_paragraph_type_DefaultParagraph$stableprop_getter(){}[0]
+final fun com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OneSpaceParagraph$stableprop_getter(): kotlin/Int // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OneSpaceParagraph$stableprop_getter|com_mohamedrejeb_richeditor_paragraph_type_OneSpaceParagraph$stableprop_getter(){}[0]
 final fun com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedList$stableprop_getter(): kotlin/Int // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedList$stableprop_getter|com_mohamedrejeb_richeditor_paragraph_type_OrderedList$stableprop_getter(){}[0]
 final fun com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_Arabic$stableprop_getter(): kotlin/Int // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_Arabic$stableprop_getter|com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_Arabic$stableprop_getter(){}[0]
 final fun com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_ArabicIndic$stableprop_getter(): kotlin/Int // com.mohamedrejeb.richeditor.paragraph.type/com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_ArabicIndic$stableprop_getter|com_mohamedrejeb_richeditor_paragraph_type_OrderedListStyleType_ArabicIndic$stableprop_getter(){}[0]

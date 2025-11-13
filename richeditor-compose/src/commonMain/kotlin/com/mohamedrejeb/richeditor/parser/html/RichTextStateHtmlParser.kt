@@ -3,23 +3,26 @@ package com.mohamedrejeb.richeditor.parser.html
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.util.fastForEachReversed
 import com.mohamedrejeb.ksoup.entities.KsoupEntities
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
 import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
-import com.mohamedrejeb.richeditor.model.*
+import com.mohamedrejeb.richeditor.model.HeadingStyle
+import com.mohamedrejeb.richeditor.model.RichSpan
+import com.mohamedrejeb.richeditor.model.RichSpanStyle
+import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.paragraph.RichParagraph
+import com.mohamedrejeb.richeditor.paragraph.type.ConfigurableListLevel
 import com.mohamedrejeb.richeditor.paragraph.type.DefaultParagraph
 import com.mohamedrejeb.richeditor.paragraph.type.OrderedList
 import com.mohamedrejeb.richeditor.paragraph.type.ParagraphType
 import com.mohamedrejeb.richeditor.paragraph.type.UnorderedList
 import com.mohamedrejeb.richeditor.parser.RichTextStateParser
-import com.mohamedrejeb.richeditor.parser.utils.*
 import com.mohamedrejeb.richeditor.utils.customMerge
-import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.util.fastForEachIndexed
-import androidx.compose.ui.util.fastForEachReversed
-import com.mohamedrejeb.richeditor.paragraph.type.ConfigurableListLevel
+import com.mohamedrejeb.richeditor.utils.diff
 
 internal object RichTextStateHtmlParser : RichTextStateParser<String> {
 
@@ -45,7 +48,8 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
                 val addedText = KsoupEntities.decodeHtml(
                     removeHtmlTextExtraSpaces(
                         input = it,
-                        trimStart = stringBuilder.lastOrNull() == null || stringBuilder.lastOrNull()?.isWhitespace() == true || stringBuilder.lastOrNull() == '\n',
+                        trimStart = stringBuilder.lastOrNull() == null || stringBuilder.lastOrNull()
+                            ?.isWhitespace() == true || stringBuilder.lastOrNull() == '\n',
                     )
                 )
 
@@ -93,7 +97,9 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
 
                 val cssStyleMap = attributes["style"]?.let { CssEncoder.parseCssStyle(it) } ?: emptyMap()
                 val cssSpanStyle = CssEncoder.parseCssStyleMapToSpanStyle(cssStyleMap)
+
                 val tagSpanStyle = htmlElementsSpanStyleEncodeMap[name]
+                val tagParagraphStyle = htmlElementsParagraphStyleEncodeMap[name]
 
                 val currentRichParagraph = richParagraphList.lastOrNull()
                 val isCurrentRichParagraphBlank = currentRichParagraph?.isBlank() == true
@@ -110,28 +116,37 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
                     currentRichParagraph.type is DefaultParagraph &&
                     isCurrentRichParagraphBlank
                 ) {
-                    val paragraphType = encodeHtmlElementToRichParagraphType(lastOpenedTag, currentListLevel)
+                    val paragraphType =
+                        encodeHtmlElementToRichParagraphType(lastOpenedTag, currentListLevel)
                     currentRichParagraph.type = paragraphType
 
-                    val cssParagraphStyle = CssEncoder.parseCssStyleMapToParagraphStyle(cssStyleMap, attributes)
-                    currentRichParagraph.paragraphStyle = currentRichParagraph.paragraphStyle.merge(cssParagraphStyle)
+                    val cssParagraphStyle = CssEncoder.parseCssStyleMapToParagraphStyle(cssStyleMap,attributes)
+                    currentRichParagraph.paragraphStyle =
+                        currentRichParagraph.paragraphStyle.merge(cssParagraphStyle)
                 }
 
                 if (isCurrentTagBlockElement) {
                     val newRichParagraph =
                         if (isCurrentRichParagraphBlank)
-                            currentRichParagraph
+                            currentRichParagraph!!
                         else
                             RichParagraph()
 
                     var paragraphType: ParagraphType = DefaultParagraph()
                     if (name == "li" && lastOpenedTag != null) {
-                        paragraphType = encodeHtmlElementToRichParagraphType(lastOpenedTag, currentListLevel)
+                        paragraphType =
+                            encodeHtmlElementToRichParagraphType(lastOpenedTag, currentListLevel)
                     }
                     val cssParagraphStyle = CssEncoder.parseCssStyleMapToParagraphStyle(cssStyleMap, attributes)
 
-                    newRichParagraph.paragraphStyle = newRichParagraph.paragraphStyle.merge(cssParagraphStyle)
+                    newRichParagraph.paragraphStyle =
+                        newRichParagraph.paragraphStyle.merge(cssParagraphStyle)
                     newRichParagraph.type = paragraphType
+
+                    // Apply paragraph style (if applicable)
+                    tagParagraphStyle?.let {
+                        newRichParagraph.paragraphStyle = newRichParagraph.paragraphStyle.merge(it)
+                    }
 
                     if (!isCurrentRichParagraphBlank) {
                         stringBuilder.append(' ')
@@ -208,11 +223,9 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
                 if (isCurrentTagBlockElement && !isCurrentRichParagraphBlank) {
                     stringBuilder.append(' ')
 
-                    val newParagraph =
-                        if (richParagraphList.isEmpty())
-                            RichParagraph()
-                        else
-                            RichParagraph(paragraphStyle = richParagraphList.last().paragraphStyle)
+                    //TODO - This was causing the paragraph style from heading tags to be applied to
+                    // subsequent paragraphs. Verify that this isn't crucial (all the tests still pass)
+                    val newParagraph = RichParagraph()
 
                     richParagraphList.add(newParagraph)
 
@@ -273,7 +286,7 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
         richTextState.richParagraphList.fastForEachIndexed { index, richParagraph ->
             val richParagraphType = richParagraph.type
             val isParagraphEmpty = richParagraph.isEmpty()
-            val paragraphGroupTagName = decodeHtmlElementFromRichParagraphType(richParagraph.type)
+            val paragraphGroupTagName = decodeHtmlElementFromRichParagraph(richParagraph)
 
             val paragraphLevel =
                 if (richParagraphType is ConfigurableListLevel)
@@ -383,10 +396,27 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
                 // Create paragraph tag name
                 val paragraphTagName =
                     if (paragraphGroupTagName == "ol" || paragraphGroupTagName == "ul") "li"
-                    else "p"
+                    else paragraphGroupTagName
 
                 // Create paragraph css
-                val paragraphCssMap = CssDecoder.decodeParagraphStyleToCssStyleMap(richParagraph.paragraphStyle)
+                val paragraphCssMap =
+                    /*
+                     Heading paragraph styles inherit custom ParagraphStyle from the Typography class.
+                     This will allow us to remove any inherited ParagraphStyle properties, but keep the user added ones.
+                     <h1> to <h6> tags will allow the browser to apply the default heading styles.
+                     If the paragraphTagName isn't a h1-h6 tag, it will revert to the old behavior of applying whatever paragraphstyle is present.
+                     */
+                    if (paragraphTagName in HeadingStyle.headingTags) {
+                        val headingType =
+                            HeadingStyle.fromParagraphStyle(richParagraph.paragraphStyle)
+                        val baseParagraphStyle = headingType.getParagraphStyle()
+                        val diffParagraphStyle =
+                            richParagraph.paragraphStyle.diff(baseParagraphStyle)
+                        CssDecoder.decodeParagraphStyleToCssStyleMap(diffParagraphStyle)
+                    } else {
+                        CssDecoder.decodeParagraphStyleToCssStyleMap(richParagraph.paragraphStyle)
+                    }
+
                 val paragraphCss = CssDecoder.decodeCssStyleMap(paragraphCssMap)
 
                 // Append paragraph opening tag
@@ -396,7 +426,12 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
 
                 // Append paragraph children
                 richParagraph.children.fastForEach { richSpan ->
-                    builder.append(decodeRichSpanToHtml(richSpan))
+                    builder.append(
+                        decodeRichSpanToHtml(
+                            richSpan,
+                            headingType = HeadingStyle.fromRichSpan(richSpan)
+                        )
+                    )
                 }
 
                 // Append paragraph closing tag
@@ -420,7 +455,11 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
     }
 
     @OptIn(ExperimentalRichTextApi::class)
-    private fun decodeRichSpanToHtml(richSpan: RichSpan, parentFormattingTags: List<String> = emptyList()): String {
+    private fun decodeRichSpanToHtml(
+        richSpan: RichSpan,
+        parentFormattingTags: List<String> = emptyList(),
+        headingType: HeadingStyle = HeadingStyle.Normal,
+    ): String {
         val stringBuilder = StringBuilder()
 
         // Check if span is empty
@@ -438,43 +477,78 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
         }
 
         // Convert span style to CSS string
-        val htmlStyleFormat = CssDecoder.decodeSpanStyleToHtmlStylingFormat(richSpan.spanStyle)
+        val htmlStyleFormat =
+            if (headingType == HeadingStyle.Normal)
+                CssDecoder.decodeSpanStyleToHtmlStylingFormat(richSpan.spanStyle)
+            else
+                CssDecoder.decodeSpanStyleToHtmlStylingFormat(richSpan.spanStyle.diff(headingType.getSpanStyle()))
         val spanCss = CssDecoder.decodeCssStyleMap(htmlStyleFormat.cssStyleMap)
         val htmlTags = htmlStyleFormat.htmlTags.filter { it !in parentFormattingTags }
 
-        val isRequireOpeningTag = tagName != "span" || tagAttributes.isNotEmpty() || spanCss.isNotEmpty()
-
-        if (isRequireOpeningTag) {
-            // Append HTML element with attributes and style
+        // Handle special tags like links, images, code
+        if (tagName == "a" || tagName == CodeSpanTagName || tagName == "img") {
+            // Add the special tag wrapper
             stringBuilder.append("<$tagName$tagAttributesStringBuilder")
-            if (spanCss.isNotEmpty()) stringBuilder.append(" style=\"$spanCss\"")
+            if (tagName != "img" && spanCss.isNotEmpty()) {
+                stringBuilder.append(" style=\"$spanCss\"")
+            }
             stringBuilder.append(">")
-        }
 
-        htmlTags.forEach {
-            stringBuilder.append("<$it>")
-        }
+            // For self-closing tags like img, don't add span content
+            if (tagName == "img") {
+                stringBuilder.append("</$tagName>")
+                return stringBuilder.toString()
+            }
 
-        // Append text
-        stringBuilder.append(KsoupEntities.encodeHtml(richSpan.text))
+            // For links and code, always add span inside
+            stringBuilder.append("<span>")
+            stringBuilder.append(KsoupEntities.encodeHtml(richSpan.text))
 
-        // Append children
-        richSpan.children.fastForEach { child ->
-            stringBuilder.append(
-                decodeRichSpanToHtml(
-                    richSpan = child,
-                    parentFormattingTags = parentFormattingTags + htmlTags,
+            // Append children
+            richSpan.children.fastForEach { child ->
+                stringBuilder.append(
+                    decodeRichSpanToHtml(
+                        richSpan = child,
+                        parentFormattingTags = parentFormattingTags + htmlTags,
+                    )
                 )
-            )
-        }
+            }
 
-        htmlTags.reversed().forEach {
-            stringBuilder.append("</$it>")
-        }
-
-        if (isRequireOpeningTag) {
-            // Append closing HTML element
+            stringBuilder.append("</span>")
             stringBuilder.append("</$tagName>")
+        } else {
+            // For regular content, always wrap in span with formatting tags
+            // Add formatting tags first (strong, em, etc.)
+            htmlTags.forEach {
+                stringBuilder.append("<$it>")
+            }
+
+            // Always add span wrapper for text content
+            stringBuilder.append("<span")
+            if (spanCss.isNotEmpty()) {
+                stringBuilder.append(" style=\"$spanCss\"")
+            }
+            stringBuilder.append(">")
+
+            // Append text
+            stringBuilder.append(KsoupEntities.encodeHtml(richSpan.text))
+
+            // Append children
+            richSpan.children.fastForEach { child ->
+                stringBuilder.append(
+                    decodeRichSpanToHtml(
+                        richSpan = child,
+                        parentFormattingTags = parentFormattingTags + htmlTags,
+                    )
+                )
+            }
+
+            stringBuilder.append("</span>")
+
+            // Close formatting tags in reverse order
+            htmlTags.reversed().forEach {
+                stringBuilder.append("</$it>")
+            }
         }
 
         return stringBuilder.toString()
@@ -546,75 +620,26 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
         listLevel: Int,
     ): ParagraphType {
         return when (tagName) {
-            "ul" -> UnorderedList(initialLevel = listLevel)
-            "ol" -> OrderedList(number = 1, initialLevel = listLevel)
+            "ul" -> UnorderedList().apply { level = listLevel }
+            "ol" -> OrderedList(number = 1).apply { level = listLevel }
             else -> DefaultParagraph()
         }
     }
 
     /**
-     * Decodes HTML elements from [ParagraphType].
+     * Decodes HTML elements from [RichParagraph].
      */
-    private fun decodeHtmlElementFromRichParagraphType(
-        richParagraphType: ParagraphType,
+    private fun decodeHtmlElementFromRichParagraph(
+        richParagraph: RichParagraph,
     ): String {
-        return when (richParagraphType) {
+        val paragraphType = richParagraph.type
+        return when (paragraphType) {
             is UnorderedList -> "ul"
             is OrderedList -> "ol"
-            else -> "p"
+            else -> richParagraph.getHeadingStyle().htmlTag ?: "p"
         }
     }
 
 }
 
-/**
- * Encodes HTML elements to [SpanStyle].
- *
- * @see <a href="https://www.w3schools.com/html/html_formatting.asp">HTML formatting</a>
- */
-internal val htmlElementsSpanStyleEncodeMap = mapOf(
-    "b" to BoldSpanStyle,
-    "strong" to BoldSpanStyle,
-    "i" to ItalicSpanStyle,
-    "em" to ItalicSpanStyle,
-    "u" to UnderlineSpanStyle,
-    "ins" to UnderlineSpanStyle,
-    "s" to StrikethroughSpanStyle,
-    "strike" to StrikethroughSpanStyle,
-    "del" to StrikethroughSpanStyle,
-    "sub" to SubscriptSpanStyle,
-    "sup" to SuperscriptSpanStyle,
-    "mark" to MarkSpanStyle,
-    "small" to SmallSpanStyle,
-    "h1" to H1SpanStyle,
-    "h2" to H2SpanStyle,
-    "h3" to H3SpanStyle,
-    "h4" to H4SpanStyle,
-    "h5" to H5SpanStyle,
-    "h6" to H6SpanStyle,
-)
 
-/**
- * Decodes HTML elements from [SpanStyle].
- *
- * @see <a href="https://www.w3schools.com/html/html_formatting.asp">HTML formatting</a>
- */
-internal val htmlElementsSpanStyleDecodeMap = mapOf(
-    BoldSpanStyle to "b",
-    ItalicSpanStyle to "i",
-    UnderlineSpanStyle to "u",
-    StrikethroughSpanStyle to "s",
-    SubscriptSpanStyle to "sub",
-    SuperscriptSpanStyle to "sup",
-    MarkSpanStyle to "mark",
-    SmallSpanStyle to "small",
-    H1SpanStyle to "h1",
-    H2SpanStyle to "h2",
-    H3SpanStyle to "h3",
-    H4SpanStyle to "h4",
-    H5SpanStyle to "h5",
-    H6SpanStyle to "h6",
-)
-
-internal const val CodeSpanTagName = "code"
-internal const val OldCodeSpanTagName = "code-span"

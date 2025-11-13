@@ -124,7 +124,7 @@ internal fun AnnotatedString.Builder.append(
     var index = startIndex
 
     withStyle(richSpan.spanStyle.merge(richSpan.richSpanStyle.spanStyle(state.config))) {
-        val newText = text.substring(index, index + richSpan.text.length)
+        val newText = text.substring(index, min(text.length, index + richSpan.text.length))
 
         richSpan.text = newText
         richSpan.textRange = TextRange(index, index + richSpan.text.length)

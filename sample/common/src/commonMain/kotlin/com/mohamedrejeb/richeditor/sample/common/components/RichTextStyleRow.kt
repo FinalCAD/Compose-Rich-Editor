@@ -6,11 +6,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.FormatAlignLeft
-import androidx.compose.material.icons.automirrored.outlined.FormatAlignRight
-import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.outlined.Article
+import androidx.compose.material.icons.outlined.Circle
+import androidx.compose.material.icons.outlined.Code
+import androidx.compose.material.icons.outlined.FormatAlignCenter
+import androidx.compose.material.icons.outlined.FormatAlignLeft
+import androidx.compose.material.icons.outlined.FormatAlignRight
+import androidx.compose.material.icons.outlined.FormatBold
+import androidx.compose.material.icons.outlined.FormatItalic
+import androidx.compose.material.icons.outlined.FormatListBulleted
+import androidx.compose.material.icons.outlined.FormatListNumbered
+import androidx.compose.material.icons.outlined.FormatSize
+import androidx.compose.material.icons.outlined.FormatStrikethrough
+import androidx.compose.material.icons.outlined.FormatUnderlined
+import androidx.compose.material.icons.outlined.Spellcheck
+import androidx.compose.material.icons.outlined.Subject
+import androidx.compose.material.icons.outlined.Title
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,12 +35,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mohamedrejeb.richeditor.annotation.ExperimentalRichTextApi
+import com.mohamedrejeb.richeditor.model.HeadingStyle
 import com.mohamedrejeb.richeditor.model.RichTextState
 import com.mohamedrejeb.richeditor.sample.common.richeditor.SpellCheck
-import com.mohamedrejeb.richeditor.sample.common.slack.SlackDemoPanelButton
 
-@OptIn(ExperimentalRichTextApi::class)
 @Composable
 fun RichTextStyleRow(
     modifier: Modifier = Modifier,
@@ -48,7 +58,7 @@ fun RichTextStyleRow(
                     )
                 },
                 isSelected = state.currentParagraphStyle.textAlign == TextAlign.Left,
-                icon = Icons.AutoMirrored.Outlined.FormatAlignLeft
+                icon = Icons.Outlined.FormatAlignLeft
             )
         }
 
@@ -76,7 +86,7 @@ fun RichTextStyleRow(
                     )
                 },
                 isSelected = state.currentParagraphStyle.textAlign == TextAlign.Right,
-                icon = Icons.AutoMirrored.Outlined.FormatAlignRight
+                icon = Icons.Outlined.FormatAlignRight
             )
         }
 
@@ -195,7 +205,7 @@ fun RichTextStyleRow(
                     state.toggleUnorderedList()
                 },
                 isSelected = state.isUnorderedList,
-                icon = Icons.AutoMirrored.Outlined.FormatListBulleted,
+                icon = Icons.Outlined.FormatListBulleted,
             )
         }
 
@@ -210,22 +220,12 @@ fun RichTextStyleRow(
         }
 
         item {
-            SlackDemoPanelButton(
+            RichTextStyleButton(
                 onClick = {
-                    state.increaseListLevel()
+                    state.addRichSpan(SpellCheck)
                 },
-                enabled = state.canIncreaseListLevel,
-                icon = Icons.Outlined.TextIncrease,
-            )
-        }
-
-        item {
-            SlackDemoPanelButton(
-                onClick = {
-                    state.decreaseListLevel()
-                },
-                enabled = state.canDecreaseListLevel,
-                icon = Icons.Outlined.TextDecrease,
+                isSelected = false,
+                icon = Icons.Outlined.Spellcheck,
             )
         }
 
@@ -241,20 +241,49 @@ fun RichTextStyleRow(
         item {
             RichTextStyleButton(
                 onClick = {
-                    state.addRichSpan(SpellCheck)
+                    state.toggleCodeSpan()
                 },
-                isSelected = state.currentRichSpanStyle is SpellCheck,
-                icon = Icons.Outlined.Spellcheck,
+                isSelected = state.isCodeSpan,
+                icon = Icons.Outlined.Code,
+            )
+        }
+
+        item {
+            Box(
+                Modifier
+                    .height(24.dp)
+                    .width(1.dp)
+                    .background(Color(0xFF393B3D))
             )
         }
 
         item {
             RichTextStyleButton(
                 onClick = {
-                    state.toggleCodeSpan()
+                    state.setHeadingStyle(HeadingStyle.Normal)
                 },
-                isSelected = state.isCodeSpan,
-                icon = Icons.Outlined.Code,
+                isSelected = state.currentHeadingStyle == HeadingStyle.Normal,
+                icon = Icons.Outlined.Article,
+            )
+        }
+
+        item {
+            RichTextStyleButton(
+                onClick = {
+                    state.setHeadingStyle(HeadingStyle.H1)
+                },
+                isSelected = state.currentHeadingStyle == HeadingStyle.H1,
+                icon = Icons.Outlined.Title,
+            )
+        }
+
+        item {
+            RichTextStyleButton(
+                onClick = {
+                    state.setHeadingStyle(HeadingStyle.H2)
+                },
+                isSelected = state.currentHeadingStyle == HeadingStyle.H2,
+                icon = Icons.Outlined.Subject,
             )
         }
     }

@@ -10,6 +10,30 @@ public final class com/mohamedrejeb/richeditor/model/DefaultImageLoader : com/mo
 	public fun load (Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)Lcom/mohamedrejeb/richeditor/model/ImageData;
 }
 
+public final class com/mohamedrejeb/richeditor/model/HeadingStyle : java/lang/Enum {
+	public static final field Companion Lcom/mohamedrejeb/richeditor/model/HeadingStyle$Companion;
+	public static final field H1 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H2 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H3 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H4 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H5 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field H6 Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static final field Normal Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getHtmlTag ()Ljava/lang/String;
+	public final fun getMarkdownElement ()Ljava/lang/String;
+	public final fun getParagraphStyle ()Landroidx/compose/ui/text/ParagraphStyle;
+	public final fun getSpanStyle ()Landroidx/compose/ui/text/SpanStyle;
+	public final fun getTextStyle ()Landroidx/compose/ui/text/TextStyle;
+	public static fun valueOf (Ljava/lang/String;)Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public static fun values ()[Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+}
+
+public final class com/mohamedrejeb/richeditor/model/HeadingStyle$Companion {
+	public final fun fromParagraphStyle (Landroidx/compose/ui/text/ParagraphStyle;)Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+	public final fun fromSpanStyle (Landroidx/compose/ui/text/SpanStyle;)Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
+}
+
 public final class com/mohamedrejeb/richeditor/model/ImageData {
 	public static final field $stable I
 	public fun <init> (Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Landroidx/compose/ui/Alignment;Landroidx/compose/ui/layout/ContentScale;Landroidx/compose/ui/Modifier;)V
@@ -57,11 +81,8 @@ public final class com/mohamedrejeb/richeditor/model/RichSpanStyle$Default : com
 	public static final field INSTANCE Lcom/mohamedrejeb/richeditor/model/RichSpanStyle$Default;
 	public fun appendCustomContent (Landroidx/compose/ui/text/AnnotatedString$Builder;Lcom/mohamedrejeb/richeditor/model/RichTextState;)Landroidx/compose/ui/text/AnnotatedString$Builder;
 	public fun drawCustomStyle-zdrCDHg (Landroidx/compose/ui/graphics/drawscope/DrawScope;Landroidx/compose/ui/text/TextLayoutResult;JLcom/mohamedrejeb/richeditor/model/RichTextConfig;FF)V
-	public fun equals (Ljava/lang/Object;)Z
 	public fun getAcceptNewTextInTheEdges ()Z
 	public fun getSpanStyle ()Lkotlin/jvm/functions/Function1;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/mohamedrejeb/richeditor/model/RichSpanStyle$DefaultImpls {
@@ -155,6 +176,7 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState {
 	public final fun getCanIncreaseListLevel ()Z
 	public final fun getComposition-MzsxiRA ()Landroidx/compose/ui/text/TextRange;
 	public final fun getConfig ()Lcom/mohamedrejeb/richeditor/model/RichTextConfig;
+	public final fun getCurrentHeadingStyle ()Lcom/mohamedrejeb/richeditor/model/HeadingStyle;
 	public final fun getCurrentParagraphStyle ()Landroidx/compose/ui/text/ParagraphStyle;
 	public final fun getCurrentRichSpanStyle ()Lcom/mohamedrejeb/richeditor/model/RichSpanStyle;
 	public final fun getCurrentSpanStyle ()Landroidx/compose/ui/text/SpanStyle;
@@ -179,7 +201,8 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState {
 	public final fun isUnorderedList ()Z
 	public final fun removeCode ()V
 	public final fun removeCodeSpan ()V
-	public final fun removeLink ()V
+	public final fun removeLink (Z)V
+	public static synthetic fun removeLink$default (Lcom/mohamedrejeb/richeditor/model/RichTextState;ZILjava/lang/Object;)V
 	public final fun removeOrderedList ()V
 	public final fun removeParagraphStyle (Landroidx/compose/ui/text/ParagraphStyle;)V
 	public final fun removeRichSpan (Lcom/mohamedrejeb/richeditor/model/RichSpanStyle;)V
@@ -193,6 +216,7 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState {
 	public final fun replaceTextRange-72CqOWE (JLjava/lang/String;)V
 	public final fun setConfig-kmsmbh4 (JLandroidx/compose/ui/text/style/TextDecoration;JJJI)V
 	public static synthetic fun setConfig-kmsmbh4$default (Lcom/mohamedrejeb/richeditor/model/RichTextState;JLandroidx/compose/ui/text/style/TextDecoration;JJJIILjava/lang/Object;)V
+	public final fun setHeadingStyle (Lcom/mohamedrejeb/richeditor/model/HeadingStyle;)V
 	public final fun setHtml (Ljava/lang/String;)Lcom/mohamedrejeb/richeditor/model/RichTextState;
 	public final fun setMarkdown (Ljava/lang/String;)Lcom/mohamedrejeb/richeditor/model/RichTextState;
 	public final fun setSelection-5zc-tL8 (J)V
@@ -209,6 +233,8 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState {
 	public final fun toggleSpanStyle (Landroidx/compose/ui/text/SpanStyle;)V
 	public final fun toggleUnorderedList ()V
 	public final fun updateLink (Ljava/lang/String;)V
+	public final fun updateLink (Ljava/lang/String;Ljava/lang/String;Z)V
+	public static synthetic fun updateLink$default (Lcom/mohamedrejeb/richeditor/model/RichTextState;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)V
 }
 
 public final class com/mohamedrejeb/richeditor/model/RichTextState$Companion {
@@ -216,6 +242,7 @@ public final class com/mohamedrejeb/richeditor/model/RichTextState$Companion {
 }
 
 public final class com/mohamedrejeb/richeditor/model/RichTextStateKt {
+	public static final field WEB_URL Ljava/lang/String;
 	public static final fun rememberRichTextState (Landroidx/compose/runtime/Composer;I)Lcom/mohamedrejeb/richeditor/model/RichTextState;
 }
 
@@ -232,6 +259,10 @@ public final class com/mohamedrejeb/richeditor/model/TextPaddingValues {
 	public final fun getVertical-XSAIIZE ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/mohamedrejeb/richeditor/paragraph/type/ListLevel {
+	public abstract fun getLevel ()I
 }
 
 public abstract interface class com/mohamedrejeb/richeditor/paragraph/type/OrderedListStyleType {

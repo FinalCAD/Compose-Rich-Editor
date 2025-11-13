@@ -5,63 +5,66 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import com.mohamedrejeb.richeditor.common.generated.resources.Raleway_Bold
-import com.mohamedrejeb.richeditor.common.generated.resources.Raleway_BoldItalic
-import com.mohamedrejeb.richeditor.common.generated.resources.Raleway_Italic
-import com.mohamedrejeb.richeditor.common.generated.resources.Raleway_Medium
-import com.mohamedrejeb.richeditor.common.generated.resources.Raleway_MediumItalic
-import com.mohamedrejeb.richeditor.common.generated.resources.Raleway_Regular
-import com.mohamedrejeb.richeditor.common.generated.resources.Raleway_SemiBold
-import com.mohamedrejeb.richeditor.common.generated.resources.Raleway_SemiBoldItalic
-import com.mohamedrejeb.richeditor.common.generated.resources.Res
+import com.finalcad.richeditor.common.generated.resources.Raleway_Bold
+import com.finalcad.richeditor.common.generated.resources.Raleway_BoldItalic
+import com.finalcad.richeditor.common.generated.resources.Raleway_Italic
+import com.finalcad.richeditor.common.generated.resources.Raleway_Medium
+import com.finalcad.richeditor.common.generated.resources.Raleway_MediumItalic
+import com.finalcad.richeditor.common.generated.resources.Raleway_Regular
+import com.finalcad.richeditor.common.generated.resources.Raleway_SemiBold
+import com.finalcad.richeditor.common.generated.resources.Raleway_SemiBoldItalic
+import com.finalcad.richeditor.common.generated.resources.Res
 import org.jetbrains.compose.resources.Font
 
-val Raleway
+val Raleway: FontFamily
     @Composable
-    get() = FontFamily(
-        listOf(
-            Font(
-                Res.font.Raleway_Regular,
-                weight = FontWeight.Normal,
-                style = FontStyle.Normal,
-            ),
-            Font(
-                Res.font.Raleway_Italic,
-                weight = FontWeight.Normal,
-                style = FontStyle.Italic,
-            ),
-            Font(
-                Res.font.Raleway_Medium,
-                weight = FontWeight.Medium,
-                style = FontStyle.Normal,
-            ),
-            Font(
-                Res.font.Raleway_MediumItalic,
-                weight = FontWeight.Medium,
-                style = FontStyle.Italic,
-            ),
-            Font(
-                Res.font.Raleway_SemiBold,
-                weight = FontWeight.SemiBold,
-                style = FontStyle.Normal,
-            ),
-            Font(
-                Res.font.Raleway_SemiBoldItalic,
-                weight = FontWeight.SemiBold,
-                style = FontStyle.Italic,
-            ),
-            Font(
-                Res.font.Raleway_Bold,
-                weight = FontWeight.Bold,
-                style = FontStyle.Normal,
-            ),
-            Font(
-                Res.font.Raleway_BoldItalic,
-                weight = FontWeight.Bold,
-                style = FontStyle.Italic,
-            ),
+    get() {
+        val fontFamily = FontFamily(
+            listOf(
+                Font(
+                    Res.font.Raleway_Regular,
+                    weight = FontWeight.Normal,
+                    style = FontStyle.Normal,
+                ),
+                Font(
+                    Res.font.Raleway_Italic,
+                    weight = FontWeight.Normal,
+                    style = FontStyle.Italic,
+                ),
+                Font(
+                    Res.font.Raleway_Medium,
+                    weight = FontWeight.Medium,
+                    style = FontStyle.Normal,
+                ),
+                Font(
+                    Res.font.Raleway_MediumItalic,
+                    weight = FontWeight.Medium,
+                    style = FontStyle.Italic,
+                ),
+                Font(
+                    Res.font.Raleway_SemiBold,
+                    weight = FontWeight.SemiBold,
+                    style = FontStyle.Normal,
+                ),
+                Font(
+                    Res.font.Raleway_SemiBoldItalic,
+                    weight = FontWeight.SemiBold,
+                    style = FontStyle.Italic,
+                ),
+                Font(
+                    Res.font.Raleway_Bold,
+                    weight = FontWeight.Bold,
+                    style = FontStyle.Normal,
+                ),
+                Font(
+                    Res.font.Raleway_BoldItalic,
+                    weight = FontWeight.Bold,
+                    style = FontStyle.Italic,
+                ),
+            )
         )
-    )
+        return fontFamily
+    }
 
 val Typography
     @Composable

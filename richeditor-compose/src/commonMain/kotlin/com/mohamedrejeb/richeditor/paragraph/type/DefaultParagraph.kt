@@ -6,6 +6,8 @@ import com.mohamedrejeb.richeditor.model.RichSpan
 import com.mohamedrejeb.richeditor.model.RichTextConfig
 import com.mohamedrejeb.richeditor.paragraph.RichParagraph
 
+
+
 internal class DefaultParagraph : ParagraphType {
     private val style: ParagraphStyle =
         ParagraphStyle()

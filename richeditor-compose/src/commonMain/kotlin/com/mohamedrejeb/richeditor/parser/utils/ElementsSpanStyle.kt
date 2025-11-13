@@ -7,9 +7,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.em
+import com.mohamedrejeb.richeditor.model.HeadingStyle
 
-internal val MarkBackgroundColor = Color.Yellow
-internal val SmallFontSize = 0.8f.em
+internal val MARK_BACKGROUND_COLOR = Color.Yellow
+internal val SMALL_FONT_SIZE = 0.8f.em
 
 internal val BoldSpanStyle = SpanStyle(fontWeight = FontWeight.Bold)
 internal val ItalicSpanStyle = SpanStyle(fontStyle = FontStyle.Italic)
@@ -17,11 +18,11 @@ internal val UnderlineSpanStyle = SpanStyle(textDecoration = TextDecoration.Unde
 internal val StrikethroughSpanStyle = SpanStyle(textDecoration = TextDecoration.LineThrough)
 internal val SubscriptSpanStyle = SpanStyle(baselineShift = BaselineShift.Subscript)
 internal val SuperscriptSpanStyle = SpanStyle(baselineShift = BaselineShift.Superscript)
-internal val MarkSpanStyle = SpanStyle(background = MarkBackgroundColor)
-internal val SmallSpanStyle = SpanStyle(fontSize = SmallFontSize)
-internal val H1SpanStyle = SpanStyle(fontSize = 2.em, fontWeight = FontWeight.Bold)
-internal val H2SpanStyle = SpanStyle(fontSize = 1.5.em, fontWeight = FontWeight.Bold)
-internal val H3SpanStyle = SpanStyle(fontSize = 1.17.em, fontWeight = FontWeight.Bold)
-internal val H4SpanStyle = SpanStyle(fontSize = 1.12.em, fontWeight = FontWeight.Bold)
-internal val H5SpanStyle = SpanStyle(fontSize = 0.83.em, fontWeight = FontWeight.Bold)
-internal val H6SpanStyle = SpanStyle(fontSize = 0.75.em, fontWeight = FontWeight.Bold)
+internal val MarkSpanStyle = SpanStyle(background = MARK_BACKGROUND_COLOR)
+internal val SmallSpanStyle = SpanStyle(fontSize = SMALL_FONT_SIZE)
+internal val H1SpanStyle = HeadingStyle.H1.getSpanStyle()
+internal val H2SpanStyle = HeadingStyle.H2.getSpanStyle()
+internal val H3SpanStyle = HeadingStyle.H3.getSpanStyle()
+internal val H4SpanStyle = HeadingStyle.H4.getSpanStyle()
+internal val H5SpanStyle = HeadingStyle.H5.getSpanStyle()
+internal val H6SpanStyle = HeadingStyle.H6.getSpanStyle()

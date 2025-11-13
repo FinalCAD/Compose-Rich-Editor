@@ -117,7 +117,7 @@ public class RichTextConfig internal constructor(
     public var exitListOnEmptyItem: Boolean = true
 }
 
-internal const val DefaultListIndent = 38
+internal const val DefaultListIndent = 12
 
 internal val DefaultUnorderedListStyleType =
     UnorderedListStyleType.from("•", "◦", "▪")
@@ -125,6 +125,6 @@ internal val DefaultUnorderedListStyleType =
 internal val DefaultOrderedListStyleType: OrderedListStyleType =
     OrderedListStyleType.Multiple(
         OrderedListStyleType.Decimal,
-        OrderedListStyleType.LowerRoman,
-        OrderedListStyleType.LowerAlpha,
+        OrderedListStyleType.Decimal,
+        OrderedListStyleType.Decimal,
     )
