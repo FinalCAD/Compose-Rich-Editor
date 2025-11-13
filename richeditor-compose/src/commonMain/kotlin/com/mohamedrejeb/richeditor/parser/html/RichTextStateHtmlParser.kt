@@ -48,8 +48,7 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
                 val addedText = KsoupEntities.decodeHtml(
                     removeHtmlTextExtraSpaces(
                         input = it,
-                        trimStart = stringBuilder.lastOrNull() == null || stringBuilder.lastOrNull()
-                            ?.isWhitespace() == true || stringBuilder.lastOrNull() == '\n',
+                        trimStart = false,
                     )
                 )
 
@@ -102,7 +101,7 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
                 val tagParagraphStyle = htmlElementsParagraphStyleEncodeMap[name]
 
                 val currentRichParagraph = richParagraphList.lastOrNull()
-                val isCurrentRichParagraphBlank = currentRichParagraph?.isBlank() == true
+                val isCurrentRichParagraphBlank = currentRichParagraph?.isEmpty() == true
                 val isCurrentTagBlockElement = name in htmlBlockElements
                 val isLastOpenedTagBlockElement = lastOpenedTag in htmlBlockElements
 
@@ -217,7 +216,7 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
             .onCloseTag { name, _ ->
                 openedTags.removeLastOrNull()
 
-                val isCurrentRichParagraphBlank = richParagraphList.lastOrNull()?.isBlank() == true
+                val isCurrentRichParagraphBlank = richParagraphList.lastOrNull()?.isEmpty() == true
                 val isCurrentTagBlockElement = name in htmlBlockElements && name != "li"
 
                 if (isCurrentTagBlockElement && !isCurrentRichParagraphBlank) {
@@ -260,7 +259,7 @@ internal object RichTextStateHtmlParser : RichTextStateParser<String> {
                 continue
 
             // Remove empty paragraphs
-            if (richParagraphList[i].isBlank())
+            if (richParagraphList[i].isEmpty())
                 richParagraphList.removeAt(i)
         }
 

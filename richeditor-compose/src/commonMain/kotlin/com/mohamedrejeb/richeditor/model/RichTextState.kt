@@ -183,7 +183,7 @@ public class RichTextState internal constructor(
 
     @Deprecated(
         message = "Use isRichSpan with T or KClass instead",
-        replaceWith = ReplaceWith("isRichSpan<>()"),
+        replaceWith = ReplaceWith("isRichSpan<T>()"),
         level = DeprecationLevel.WARNING,
     )
     public fun isRichSpan(spanStyle: RichSpanStyle): Boolean =
@@ -1746,7 +1746,7 @@ public class RichTextState internal constructor(
 
         usedInlineContentMapKeys.clear()
 
-        annotatedString = buildAnnotatedString {
+        val localAnnotatedString = buildAnnotatedString {
             var index = 0
             richParagraphList.fastForEachIndexed { i, richParagraph ->
                 if (index > newText.length) {
@@ -1794,10 +1794,10 @@ public class RichTextState internal constructor(
         }
 
         styledRichSpanList.clear()
-        textFieldValue = newTextFieldValue.copy(text = annotatedString.text)
+        textFieldValue = newTextFieldValue.copy(text = localAnnotatedString.text)
         visualTransformation = VisualTransformation { _ ->
             TransformedText(
-                text = annotatedString,
+                text = localAnnotatedString,
                 offsetMapping = OffsetMapping.Identity
             )
         }
